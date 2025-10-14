@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Itmo.ObjectOrientedProgramming.Lab1.Tests;
 
-public class Tests
+public class SimulationTests
 {
     [Fact]
     public void Train_has_too_more_power()
