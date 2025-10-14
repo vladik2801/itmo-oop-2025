@@ -2,7 +2,7 @@
 
 public sealed record CountPeople
 {
-    public readonly int Count;
+    public int Count { get; }
 
     public CountPeople(int count)
     {

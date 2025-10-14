@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Itmo.ObjectOrientedProgramming.Lab1.Tests;
 
-public class Limit
+public class Tests
 {
     [Fact]
     public void Train_has_too_more_power()
@@ -14,9 +14,9 @@ public class Limit
 
         calc.Calculator(train, mpath);
 
-        string message = calc.result.MakeResult();
+        string message = calc.ResultSimulation.MakeResult();
 
-        Assert.False(calc.result.IsSuccessfully);
+        Assert.False(calc.ResultSimulation.IsSuccessfully);
         Assert.Equal("Fail!", message);
     }
 
@@ -30,9 +30,9 @@ public class Limit
 
         calc.Calculator(train, mpath, station);
 
-        string message = calc.result.MakeResult();
+        string message = calc.ResultSimulation.MakeResult();
 
-        Assert.False(calc.result.IsSuccessfully);
+        Assert.False(calc.ResultSimulation.IsSuccessfully);
         Assert.Equal("Fail!", message);
     }
 
@@ -45,15 +45,12 @@ public class Limit
 
         calc.Calculator(train, mpath);
 
-        string message = calc.result.MakeResult();
+        string message = calc.ResultSimulation.MakeResult();
 
-        Assert.False(calc.result.IsSuccessfully);
+        Assert.False(calc.ResultSimulation.IsSuccessfully);
         Assert.Equal("Fail!", message);
     }
-}
 
-public class Clasic_normal_situation
-{
     [Fact]
     public void Train_has_normal_speed_and_normal_way()
     {
@@ -64,9 +61,8 @@ public class Clasic_normal_situation
 
         calc.Calculator(train, mpath, path);
 
-
-        Assert.True(calc.result.IsSuccessfully);
-        Assert.Equal(700, calc.result.Time.time);
+        Assert.True(calc.ResultSimulation.IsSuccessfully);
+        Assert.Equal(700, calc.ResultSimulation.TimeTrain.Seconds);
     }
 
     [Fact]
@@ -81,9 +77,8 @@ public class Clasic_normal_situation
 
         calc.Calculator(train, mpath, path, station, path2);
 
-
-        Assert.True(calc.result.IsSuccessfully);
-        Assert.Equal(588.33, calc.result.Time.time);
+        Assert.True(calc.ResultSimulation.IsSuccessfully);
+        Assert.Equal(588.33, calc.ResultSimulation.TimeTrain.Seconds);
     }
 
     [Fact]
@@ -102,13 +97,10 @@ public class Clasic_normal_situation
 
         calc.Calculator(train, mpath, path, mpath2, station, path2, mpath3, path3, mpath4);
 
-        Assert.True(calc.result.IsSuccessfully);
-        Assert.Equal(330.33, calc.result.Time.time);
+        Assert.True(calc.ResultSimulation.IsSuccessfully);
+        Assert.Equal(330.33, calc.ResultSimulation.TimeTrain.Seconds);
     }
-}
 
-public class Situation_unsuccesfully
-{
     [Fact]
     public void Train_without_boost()
     {
@@ -118,7 +110,7 @@ public class Situation_unsuccesfully
 
         calc.Calculator(train, path);
 
-        Assert.False(calc.result.IsSuccessfully);
+        Assert.False(calc.ResultSimulation.IsSuccessfully);
     }
 
     [Fact]
@@ -131,6 +123,6 @@ public class Situation_unsuccesfully
 
         calc.Calculator(train, mpath1, mpath2);
 
-        Assert.False(calc.result.IsSuccessfully);
+        Assert.False(calc.ResultSimulation.IsSuccessfully);
     }
 }

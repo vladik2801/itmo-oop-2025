@@ -18,15 +18,15 @@ public sealed class Station : IRoute
 
     public bool IsValidLimit(double value)
     {
-        if (value < limitSpeed.speed) return true;
+        if (value < limitSpeed.SpeedMC) return true;
         return false;
     }
 
-    public double MakeTimeWaitingBoard() => countPeople.Count * timeBoardByOne.time;
+    public double MakeTimeWaitingBoard() => countPeople.Count * timeBoardByOne.Seconds;
 
     public void Simulate(Train train, Result result)
     {
-        if (!this.IsValidLimit(train.speed.speed)) result.MakeFalse();
+        if (!this.IsValidLimit(train.SpeedTrain.SpeedMC)) result.MakeFalse();
 
         result.AddTimeValue(this.MakeTimeWaitingBoard() * coefficientIncomingPeople);
     }

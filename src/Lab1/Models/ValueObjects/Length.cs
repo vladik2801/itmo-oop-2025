@@ -2,10 +2,10 @@
 
 public sealed record Length
 {
-    public readonly double length;
+    public double Metres { get; }
 
-    public Length(double kilometres)
+    public Length(double metres)
     {
-        length = kilometres;
+        Metres = metres;
     }
 }

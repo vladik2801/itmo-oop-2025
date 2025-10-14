@@ -2,7 +2,7 @@
 
 public sealed record Accuracy
 {
-    public readonly double Time;
+    public double Time { get; }
 
     public Accuracy(int seconds)
     {

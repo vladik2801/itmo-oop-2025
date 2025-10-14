@@ -6,12 +6,12 @@ public sealed class Result
 {
     public bool IsSuccessfully { get; private set; }
 
-    private Time Time;
+    public Time TimeTrain { get; private set; }
 
     public Result(bool isSuccessfully, double time = 0)
     {
         this.IsSuccessfully = isSuccessfully;
-        this.Time = new(time);
+        this.TimeTrain = new(time);
     }
 
     public string MakeResult()
@@ -19,7 +19,7 @@ public sealed class Result
         if (IsSuccessfully)
         {
             Rounding();
-            return "Successfully! Time:" + Time.ToString();
+            return "Successfully! Time:" + TimeTrain.ToString();
         }
 
         return "Fail!";
@@ -29,9 +29,9 @@ public sealed class Result
 
     public void AddTimeValue(double value)
     {
-        Time = new(value + Time.time);
+        TimeTrain = new(value + TimeTrain.Seconds);
         Rounding();
     }
 
-    private void Rounding() => Time = new(Math.Round(Time.time, 2));
+    private void Rounding() => TimeTrain = new(Math.Round(TimeTrain.Seconds, 2));
 }

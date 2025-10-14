@@ -2,10 +2,10 @@
 
 public sealed record Power
 {
-    public readonly double power;
+    public double Nutone { get; }
 
     public Power(double powerInp)
     {
-        power = powerInp;
+        Nutone = powerInp;
     }
 }

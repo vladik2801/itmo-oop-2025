@@ -2,10 +2,10 @@
 
 public sealed record Boost
 {
-    public readonly double boost;
+    public double BoostMC { get; }
 
     public Boost(double boostInp)
     {
-        boost = boostInp;
+        BoostMC = boostInp;
     }
 }

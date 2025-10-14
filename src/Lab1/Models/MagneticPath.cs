@@ -14,19 +14,19 @@ public sealed class MagneticPath : IRoute
         this.totalLength = new Length(length);
     }
 
-    public void MinusLength(double length) => totalLength = new(totalLength.length - length);
+    public void MinusLength(double length) => totalLength = new(totalLength.Metres - length);
 
-    public bool IsZeroMore() => totalLength.length > 0;
+    public bool IsZeroMore() => totalLength.Metres > 0;
 
     public void Simulate(Train train, Result result)
     {
-        if (train.maxPower.power < this.Power.power + train.power.power)
+        if (train.MaxPower.Nutone < this.Power.Nutone + train.PowerTrain.Nutone)
         {
             result.MakeFalse();
             return;
         }
 
-        if (!train.TryCalculationBoost(this.Power.power))
+        if (!train.TryCalculationBoost(this.Power.Nutone))
         {
             result.MakeFalse();
             return;
@@ -34,7 +34,7 @@ public sealed class MagneticPath : IRoute
 
         while (this.IsZeroMore())
         {
-            result.AddTimeValue(train.accuracy.Time);
+            result.AddTimeValue(train.AccuracyTrain.Time);
 
             try
             {

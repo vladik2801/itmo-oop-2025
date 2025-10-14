@@ -2,11 +2,11 @@
 
 public sealed record Time
 {
-    public readonly double time;
+    public double Seconds { get; }
 
     public Time(double timeInp)
     {
         if (timeInp < 0) throw new ArgumentOutOfRangeException(nameof(timeInp), "Time must be positive!");
-        this.time = timeInp;
+        this.Seconds = timeInp;
     }
 }

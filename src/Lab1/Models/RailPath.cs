@@ -11,13 +11,13 @@ public sealed class RailPath : IRoute
         this.totalLength = new Length(length);
     }
 
-    public void MinusLength(double length) => totalLength = new(totalLength.length - length);
+    public void MinusLength(double length) => totalLength = new(totalLength.Metres - length);
 
-    public bool IsZeroMore() => totalLength.length > 0;
+    public bool IsZeroMore() => totalLength.Metres > 0;
 
     public void Simulate(Train train, Result result)
     {
-        if ((train.Boost.boost == 0 && train.speed.speed <= 0) || (train.speed.speed < 0))
+        if ((train.Boost.BoostMC == 0 && train.SpeedTrain.SpeedMC <= 0) || (train.SpeedTrain.SpeedMC < 0))
         {
             result.MakeFalse();
             return;
@@ -26,7 +26,7 @@ public sealed class RailPath : IRoute
         train.Boost = new(0);
         while (this.IsZeroMore())
         {
-            result.AddTimeValue(train.accuracy.Time);
+            result.AddTimeValue(train.AccuracyTrain.Time);
             train.MakeSpeed();
             this.MinusLength(train.GetDistance());
         }
