@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using test.models.ValueObjects;
-using Test.Models.ValueObjects;
-namespace Test.Models;
+﻿using Itmo.ObjectOrientedProgramming.Lab1.Models.ValueObjects;
+
+namespace Itmo.ObjectOrientedProgramming.Lab1.Models;
 
 public sealed class Station : IRoute
 {
@@ -15,17 +9,19 @@ public sealed class Station : IRoute
     private readonly CountPeople countPeople;
     private readonly double coefficientIncomingPeople = 2;
 
-    public Station(double Limit, int CountPeopleInp)
+    public Station(double limit, int countPeopleInp)
     {
-        timeBoardByOne = new Time(2d/60);
-        limitSpeed = new Speed(Limit);
-        countPeople = new CountPeople(CountPeopleInp);
+        timeBoardByOne = new Time(2d / 60);
+        limitSpeed = new Speed(limit);
+        countPeople = new CountPeople(countPeopleInp);
     }
+
     public bool IsValidLimit(double value)
     {
         if (value < limitSpeed.speed) return true;
         return false;
     }
+
     public double MakeTimeWaitingBoard() => countPeople.Count * timeBoardByOne.time;
 
     public void Simulate(Train train, Result result)
@@ -34,5 +30,4 @@ public sealed class Station : IRoute
 
         result.AddTimeValue(this.MakeTimeWaitingBoard() * coefficientIncomingPeople);
     }
-
 }

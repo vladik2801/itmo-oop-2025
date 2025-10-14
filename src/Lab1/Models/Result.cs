@@ -1,36 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Test.Models.ValueObjects;
-namespace Test.Models;
+﻿using Itmo.ObjectOrientedProgramming.Lab1.Models.ValueObjects;
+
+namespace Itmo.ObjectOrientedProgramming.Lab1.Models;
 
 public sealed class Result
 {
     public bool IsSuccessfully { get; private set; }
-    public Time Time; 
+
+    private Time Time;
 
     public Result(bool isSuccessfully, double time = 0)
     {
         this.IsSuccessfully = isSuccessfully;
-        if (isSuccessfully) this.Time = new(time);
+        this.Time = new(time);
     }
+
     public string MakeResult()
     {
         if (IsSuccessfully)
         {
             Rounding();
             return "Successfully! Time:" + Time.ToString();
-
         }
 
-        return ("Fail!");
+        return "Fail!";
     }
-    public void MakeFalse() => IsSuccessfully = false;
 
-    private void Rounding() => Time = new(Math.Round(Time.time, 2));
+    public void MakeFalse() => IsSuccessfully = false;
 
     public void AddTimeValue(double value)
     {
@@ -38,4 +33,5 @@ public sealed class Result
         Rounding();
     }
 
+    private void Rounding() => Time = new(Math.Round(Time.time, 2));
 }

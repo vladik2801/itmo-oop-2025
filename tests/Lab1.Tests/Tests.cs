@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Itmo.ObjectOrientedProgramming.Lab1.Models;
 using Xunit;
-using Test.Models;
-namespace Tests.Lab1.Tests;
+
+namespace Itmo.ObjectOrientedProgramming.Lab1.Tests;
+
 public class Limit
 {
     [Fact]
@@ -17,26 +14,26 @@ public class Limit
 
         calc.Calculator(train, mpath);
 
-        string Message = calc.result.MakeResult();
+        string message = calc.result.MakeResult();
 
         Assert.False(calc.result.IsSuccessfully);
-        Assert.Equal("Fail!", Message);
+        Assert.Equal("Fail!", message);
     }
 
     [Fact]
     public void Train_has_more_speed_than_station_limit()
     {
-        Train train = new(500, 10000, 3,10000);
+        Train train = new(500, 10000, 3, 10000);
         MagneticPath mpath = new(3000, 300);
         Station station = new(10, 100);
         Simulation calc = new();
 
         calc.Calculator(train, mpath, station);
 
-        string Message = calc.result.MakeResult();
+        string message = calc.result.MakeResult();
 
         Assert.False(calc.result.IsSuccessfully);
-        Assert.Equal("Fail!", Message);
+        Assert.Equal("Fail!", message);
     }
 
     [Fact]
@@ -48,11 +45,10 @@ public class Limit
 
         calc.Calculator(train, mpath);
 
-        string Message = calc.result.MakeResult();
+        string message = calc.result.MakeResult();
 
         Assert.False(calc.result.IsSuccessfully);
-        Assert.Equal("Fail!", Message);
-
+        Assert.Equal("Fail!", message);
     }
 }
 
@@ -67,11 +63,10 @@ public class Clasic_normal_situation
         Simulation calc = new();
 
         calc.Calculator(train, mpath, path);
-        
+
 
         Assert.True(calc.result.IsSuccessfully);
         Assert.Equal(700, calc.result.Time.time);
-        
     }
 
     [Fact]
@@ -82,17 +77,17 @@ public class Clasic_normal_situation
         RailPath path = new(3000);
         Station station = new(300, 50);
         RailPath path2 = new(1000);
-        Simulation calc  = new();
+        Simulation calc = new();
 
         calc.Calculator(train, mpath, path, station, path2);
-        
+
 
         Assert.True(calc.result.IsSuccessfully);
         Assert.Equal(588.33, calc.result.Time.time);
-       
     }
+
     [Fact]
-     public void Unnormal_speed_fromMpath_path_MpathLow_station_path_MpathHigh_path_MpathLow()
+    public void Unnormal_speed_fromMpath_path_MpathLow_station_path_MpathHigh_path_MpathLow()
     {
         Train train = new(600, 2000, 3, 75);
         MagneticPath mpath = new(600, 150);
@@ -105,15 +100,11 @@ public class Clasic_normal_situation
         MagneticPath mpath4 = new(600, -250);
         Simulation calc = new();
 
-        calc.Calculator(train, mpath,path,mpath2,station,path2,mpath3,path3, mpath4);
+        calc.Calculator(train, mpath, path, mpath2, station, path2, mpath3, path3, mpath4);
 
         Assert.True(calc.result.IsSuccessfully);
         Assert.Equal(330.33, calc.result.Time.time);
-
     }
-
-
-    
 }
 
 public class Situation_unsuccesfully
@@ -129,6 +120,7 @@ public class Situation_unsuccesfully
 
         Assert.False(calc.result.IsSuccessfully);
     }
+
     [Fact]
     public void Train_go_back()
     {
@@ -137,9 +129,8 @@ public class Situation_unsuccesfully
         MagneticPath mpath2 = new(1000, -20);
         Simulation calc = new();
 
-        calc.Calculator(train,mpath1,mpath2);
+        calc.Calculator(train, mpath1, mpath2);
 
         Assert.False(calc.result.IsSuccessfully);
     }
 }
-
