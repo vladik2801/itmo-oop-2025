@@ -31,11 +31,11 @@ public sealed class Train
 
     public bool TryCalculationBoost(double powerInp)
     {
-        if (MaxPower.Nutone >= powerInp + this.PowerTrain.Nutone)
+        if (MaxPower.Nutone >= powerInp + PowerTrain.Nutone)
         {
             PowerTrain = new(PowerTrain.Nutone + powerInp);
 
-            Boost = new((powerInp + this.PowerTrain.Nutone) / weight.Kilograms);
+            Boost = new((powerInp + PowerTrain.Nutone) / weight.Kilograms);
             return true;
         }
 

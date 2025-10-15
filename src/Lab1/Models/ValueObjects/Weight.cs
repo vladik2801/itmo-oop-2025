@@ -14,6 +14,6 @@ public sealed record Weight
                 "The weight of the train cannot be less than 300 kg.");
         }
 
-        this.Kilograms = kilograms;
+        Kilograms = kilograms;
     }
 }

@@ -7,6 +7,6 @@ public sealed record Time
     public Time(double timeInp)
     {
         if (timeInp < 0) throw new ArgumentOutOfRangeException(nameof(timeInp), "Time must be positive!");
-        this.Seconds = timeInp;
+        Seconds = timeInp;
     }
 }

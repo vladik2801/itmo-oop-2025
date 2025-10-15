@@ -26,12 +26,12 @@ public sealed class Station : IRoute
 
     public void Simulate(Train train, Result result)
     {
-        if (!this.IsValidLimit(train.SpeedTrain.SpeedMC))
+        if (!IsValidLimit(train.SpeedTrain.SpeedMC))
         {
             result.MakeFalse();
             return;
         }
 
-        result.AddTimeValue(this.MakeTimeWaitingBoard() * coefficientIncomingPeople);
+        result.AddTimeValue(MakeTimeWaitingBoard() * coefficientIncomingPeople);
     }
 }

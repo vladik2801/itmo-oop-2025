@@ -8,7 +8,7 @@ public sealed class RailPath : IRoute
 
     public RailPath(double length)
     {
-        this.totalLength = new Length(length);
+        totalLength = new Length(length);
     }
 
     public void MinusLength(double length) => totalLength = new(totalLength.Metres - length);
@@ -24,11 +24,11 @@ public sealed class RailPath : IRoute
         }
 
         train.Boost = new(0);
-        while (this.IsZeroMore())
+        while (IsZeroMore())
         {
             result.AddTimeValue(train.AccuracyTrain.Time);
             train.MakeSpeed();
-            this.MinusLength(train.GetDistance());
+            MinusLength(train.GetDistance());
         }
     }
 }

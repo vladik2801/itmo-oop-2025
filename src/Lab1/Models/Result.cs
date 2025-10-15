@@ -10,8 +10,8 @@ public sealed class Result
 
     public Result(bool isSuccessfully, double time = 0)
     {
-        this.IsSuccessfully = isSuccessfully;
-        this.TimeTrain = new(time);
+        IsSuccessfully = isSuccessfully;
+        TimeTrain = new(time);
     }
 
     public string MakeResult()

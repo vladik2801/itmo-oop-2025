@@ -10,8 +10,8 @@ public sealed class MagneticPath : IRoute
 
     public MagneticPath(double length, double powerInp)
     {
-        this.power = new(powerInp);
-        this.totalLength = new Length(length);
+        power = new(powerInp);
+        totalLength = new Length(length);
     }
 
     public void MinusLength(double length) => totalLength = new(totalLength.Metres - length);
@@ -20,19 +20,19 @@ public sealed class MagneticPath : IRoute
 
     public void Simulate(Train train, Result result)
     {
-        if (train.MaxPower.Nutone < this.power.Nutone + train.PowerTrain.Nutone)
+        if (train.MaxPower.Nutone < power.Nutone + train.PowerTrain.Nutone)
         {
             result.MakeFalse();
             return;
         }
 
-        if (!train.TryCalculationBoost(this.power.Nutone))
+        if (!train.TryCalculationBoost(power.Nutone))
         {
             result.MakeFalse();
             return;
         }
 
-        while (this.IsZeroMore())
+        while (IsZeroMore())
         {
             result.AddTimeValue(train.AccuracyTrain.Time);
 
