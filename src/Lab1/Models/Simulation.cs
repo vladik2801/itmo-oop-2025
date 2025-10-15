@@ -2,18 +2,16 @@
 
 public sealed class Simulation
 {
-    public Result ResultSimulation { get; } = new Result(true, 0);
+    public Result ResultSimulation { get; } = new(true, 0);
 
-    public Result Calculator(Train train, params IRoute[] way)
+    public void Calculator(Train train, params IRoute[] way)
     {
-        var result = new Result(false, 0);
         foreach (IRoute route in way)
         {
-            route.Simulate(train, result);
-            if (!result.IsSuccessfully) break;
+            route.Simulate(train, ResultSimulation);
+            if (!ResultSimulation.IsSuccessfully) break;
         }
 
-        if (!train.IsNormalSpeed(train.SpeedTrain.SpeedMC)) result.MakeFalse();
-        return result;
+        if (!train.IsNormalSpeed(train.SpeedTrain.SpeedMC)) ResultSimulation.MakeFalse();
     }
 }

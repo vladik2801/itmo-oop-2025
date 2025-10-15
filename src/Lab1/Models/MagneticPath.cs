@@ -4,13 +4,13 @@ namespace Itmo.ObjectOrientedProgramming.Lab1.Models;
 
 public sealed class MagneticPath : IRoute
 {
-    public Power Power { get; private set; }
+    private readonly Power power;
 
     private Length totalLength;
 
     public MagneticPath(double length, double powerInp)
     {
-        this.Power = new(powerInp);
+        this.power = new(powerInp);
         this.totalLength = new Length(length);
     }
 
@@ -20,13 +20,13 @@ public sealed class MagneticPath : IRoute
 
     public void Simulate(Train train, Result result)
     {
-        if (train.MaxPower.Nutone < this.Power.Nutone + train.PowerTrain.Nutone)
+        if (train.MaxPower.Nutone < this.power.Nutone + train.PowerTrain.Nutone)
         {
             result.MakeFalse();
             return;
         }
 
-        if (!train.TryCalculationBoost(this.Power.Nutone))
+        if (!train.TryCalculationBoost(this.power.Nutone))
         {
             result.MakeFalse();
             return;
