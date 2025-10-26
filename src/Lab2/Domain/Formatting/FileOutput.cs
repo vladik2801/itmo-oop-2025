@@ -1,6 +1,6 @@
 ﻿namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Formatting;
 
-public class FileOutput : IOutput, System.IDisposable
+public class FileOutput : IOutput, IDisposable
 {
     private readonly StreamWriter _writer;
     private bool _disposed = false;
