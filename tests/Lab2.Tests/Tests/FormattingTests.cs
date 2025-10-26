@@ -1,6 +1,6 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Formatting;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.Formatting.Archiving;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
+using Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Archiving;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 using Itmo.ObjectOrientedProgramming.Lab2.Tests.Mocks;
 using Xunit;

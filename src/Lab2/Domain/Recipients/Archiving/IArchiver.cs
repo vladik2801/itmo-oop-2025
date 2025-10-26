@@ -1,6 +1,6 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
-namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Formatting.Archiving;
+namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Archiving;
 
 public interface IArchiver
 {
