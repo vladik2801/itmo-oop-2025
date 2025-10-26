@@ -13,7 +13,7 @@ public class FileLogger : ILogger, IDisposable
 
     public void Info(string text) => _output.Writeln($"[INFO ] {DateTime.UtcNow:O} {text}");
 
-    public void Warn(string text) => _output.Writeln($"[WARN] {DateTime.UtcNow:O} {text}");
+    public void Warn(string text) => _output.Writeln($"[WARN ] {DateTime.UtcNow:O} {text}");
 
     public void ErrorL(string text, Exception? ex = null)
     {
