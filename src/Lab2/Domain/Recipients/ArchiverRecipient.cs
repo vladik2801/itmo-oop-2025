@@ -5,15 +5,15 @@ namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients;
 
 public class ArchiverRecipient : IRecipient
 {
-   private readonly IArchiver _archiver;
+    private readonly IArchiver _archiver;
 
-   public ArchiverRecipient(IArchiver archiver)
-   {
-       _archiver = archiver;
-   }
+    public ArchiverRecipient(IArchiver archiver)
+    {
+        _archiver = archiver;
+    }
 
-   public void Send(Message message)
-   {
-       _archiver.Archive(message);
-   }
+    public void Send(Message message)
+    {
+        _archiver.Archive(message);
+    }
 }
