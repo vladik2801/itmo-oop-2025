@@ -4,34 +4,36 @@ namespace Itmo.ObjectOrientedProgramming.Lab1.Models;
 
 public sealed class Result
 {
-    public bool IsSuccessfully { get; private set; }
+    private Outcome _value;
 
-    public Time TimeTrain { get; private set; }
+    public bool IsSuccessfully => _value.IsSuccessfully;
+
+    public Time TimeTrain => new(_value.TimeSeconds);
 
     public Result(bool isSuccessfully, double time = 0)
     {
-        IsSuccessfully = isSuccessfully;
-        TimeTrain = new(time);
+        _value = new Outcome(isSuccessfully, time);
     }
 
     public string MakeResult()
     {
         if (IsSuccessfully)
         {
-            Rounding();
+            _value = _value.Rounded();
             return "Successfully! Time:" + TimeTrain.ToString();
         }
 
         return "Fail!";
     }
 
-    public void MakeFalse() => IsSuccessfully = false;
+    public void MakeFalse() => _value = _value with { IsSuccessfully = false };
 
-    public void AddTimeValue(double value)
+    public void AddTimeValue(double value) => _value = _value.Add(value).Rounded();
+
+    private readonly record struct Outcome(bool IsSuccessfully, double TimeSeconds)
     {
-        TimeTrain = new(value + TimeTrain.Seconds);
-        Rounding();
-    }
+        public Outcome Add(double value) => IsSuccessfully ? this with { TimeSeconds = TimeSeconds + value } : this;
 
-    private void Rounding() => TimeTrain = new(Math.Round(TimeTrain.Seconds, 2));
+        public Outcome Rounded() => this with { TimeSeconds = Math.Round(TimeSeconds, 2) };
+    }
 }

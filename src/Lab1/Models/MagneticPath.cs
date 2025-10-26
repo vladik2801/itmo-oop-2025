@@ -36,11 +36,7 @@ public sealed class MagneticPath : IRoute
         {
             result.AddTimeValue(train.AccuracyTrain.Time);
 
-            try
-            {
-                train.MakeSpeed();
-            }
-            catch (ArgumentOutOfRangeException)
+            if (!train.TryMakeSpeedSafe())
             {
                 result.MakeFalse();
                 break;

@@ -16,11 +16,7 @@ public sealed class Station : IRoute
         countPeople = new CountPeople(countPeopleInp);
     }
 
-    public bool IsValidLimit(double value)
-    {
-        if (value < limitSpeed.SpeedMC) return true;
-        return false;
-    }
+    public bool IsValidLimit(double value) => value < limitSpeed.SpeedMC;
 
     public double MakeTimeWaitingBoard() => countPeople.Count * timeBoardByOne.Seconds;
 

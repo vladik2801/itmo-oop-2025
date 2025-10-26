@@ -44,6 +44,15 @@ public sealed class Train
 
     public bool IsNormalSpeed(double speed) => speed <= limitSpeed.SpeedMC;
 
+    public bool TryMakeSpeedSafe()
+    {
+        double newSpeed = SpeedTrain.SpeedMC + (AccuracyTrain.Time * Boost.BoostMC);
+        if (newSpeed < 0) return false;
+
+        SpeedTrain = new(newSpeed);
+        return true;
+    }
+
     public void MakeSpeed()
     {
         double newSpeed = AccuracyTrain.Time * Boost.BoostMC;
