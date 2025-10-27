@@ -1,16 +1,16 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
-namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Decorators;
+namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
 
-public class FilterRecipients : IRecipient
+public class FilterAddressees : IAddressee
 {
-    private readonly IRecipient _recipient;
+    private readonly IAddressee _addressee;
     private readonly Priority _priority;
 
-    public FilterRecipients(IRecipient recipient, Priority priority)
+    public FilterAddressees(IAddressee addressee, Priority priority)
     {
-        _recipient = recipient;
+        _addressee = addressee;
         _priority = priority;
     }
 
@@ -18,7 +18,7 @@ public class FilterRecipients : IRecipient
     {
         if (message.Priority >= _priority)
         {
-            _recipient.Send(message);
+            _addressee.Send(message);
         }
     }
 }

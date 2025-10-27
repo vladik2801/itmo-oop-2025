@@ -2,9 +2,9 @@
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
 
-public class EntryBox
+public class InboxItem
 {
-    public EntryBox(Message message, ReadState readState)
+    public InboxItem(Message message, ReadState readState)
     {
         Message = message;
         ReadState = readState;
@@ -14,9 +14,10 @@ public class EntryBox
 
     public ReadState ReadState { get; private set; }
 
-    public void MakeRead()
+    public Result MakeRead()
     {
-        if (ReadState == ReadState.Read) throw new InvalidOperationException();
+        if (ReadState == ReadState.Read) return Result.Fail("Already read");
         ReadState = ReadState.Read;
+        return Result.Ok();
     }
 }

@@ -1,8 +1,8 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Formatting;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
+using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Archiving;
+using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Logging;
+using Itmo.ObjectOrientedProgramming.Lab2.Domain.Formatting;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Archiving;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Decorators;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Logging;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 using Itmo.ObjectOrientedProgramming.Lab2.Tests.Mocks;
 using Xunit;
@@ -18,11 +18,11 @@ public sealed class FileTests
         Directory.CreateDirectory(dir);
         string path = Path.Combine(dir, Guid.NewGuid().ToString() + ".log");
 
-        var inner = new RecipientMock { ExceptedCalls = 1 };
+        var inner = new AddresseeMock { ExceptedCalls = 1 };
 
         using (var filelogger = new FileLogger(path))
         {
-            var sut = new LoggingRecipients(inner, filelogger);
+            var sut = new LoggingAddressees(inner, filelogger);
             sut.Send(new Message("Title", "Body", Priority.High));
         }
 
@@ -37,11 +37,9 @@ public sealed class FileTests
         Directory.CreateDirectory(dir);
         string path = Path.Combine(dir, Guid.NewGuid() + ".md");
 
-        using (var output = new FileOutput(path))
+        using (var formatter = new FileFormatter(path, append: false))
         {
-            var formatter = new MarkDownMessageFormatter(output);
             var archiver = new FormattingArchiver(formatter);
-
             var message = new Message("Title", "Body", Priority.High);
             archiver.Archive(message);
         }

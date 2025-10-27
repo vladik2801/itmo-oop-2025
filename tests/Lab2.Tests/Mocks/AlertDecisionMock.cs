@@ -1,17 +1,19 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Alerts;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Alerts;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Tests.Mocks;
 
 public sealed class AlertDecisionMock : IAlertDecision
 {
-    public bool Result { get; set; }
+    public bool ShouldAlert { get; set; }
 
-    public string Reason { get; set; } = "mock";
+    public string ExpectedReason { get; set; } = "mock";
 
-    public bool TryGetAlertReason(Message message, out string reason)
+    public Message? LastMessage { get; private set; }
+
+    public string? GetReason(Message message)
     {
-        reason = Reason;
-        return Result;
+        LastMessage = message;
+        return ShouldAlert ? ExpectedReason : null;
     }
 }

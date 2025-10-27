@@ -5,7 +5,7 @@ namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Users;
 
 public sealed class User
 {
-    private readonly List<EntryBox> _inbox = new();
+    private readonly List<InboxItem> _inbox = new();
 
     public User(int userid, string username)
     {
@@ -17,19 +17,18 @@ public sealed class User
 
     public string UserName { get; }
 
-    public IReadOnlyList<EntryBox> Inbox => _inbox;
+    public IReadOnlyList<InboxItem> Inbox => _inbox;
 
-    public EntryBox Receive(Message message)
+    public InboxItem Receive(Message message)
     {
-        var entryBox = new EntryBox(message, ReadState.Unread);
+        var entryBox = new InboxItem(message, ReadState.Unread);
         _inbox.Add(entryBox);
         return entryBox;
     }
 
-    public void MakeRead(EntryBox entryBox)
+    public Result MakeRead(InboxItem inboxItem)
     {
-        if (entryBox is null) throw new ArgumentNullException(nameof(entryBox), "entryBox cannot be null.");
-        if (_inbox.Contains(entryBox)) throw new InvalidOperationException();
-        entryBox.MakeRead();
+        if (_inbox.Contains(inboxItem)) return Result.Fail("Not Found", "Item not found");
+        return inboxItem.MakeRead();
     }
 }

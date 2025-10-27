@@ -1,10 +1,10 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 using Xunit;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Tests.Mocks;
 
-public sealed class RecipientMock : IRecipient
+public sealed class AddresseeMock : IAddressee
 {
     private int _calls;
 

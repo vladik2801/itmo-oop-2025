@@ -1,13 +1,13 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Users;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
-namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients;
+namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
 
-public class UserRecipient : IRecipient
+public class UserAddressee : IAddressee
 {
-    public UserRecipient(User userInp)
+    public UserAddressee(User user)
     {
-        User = userInp;
+        User = user;
     }
 
     public User User { get; }

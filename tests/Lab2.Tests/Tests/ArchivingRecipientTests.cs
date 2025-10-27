@@ -1,5 +1,5 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
+using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 using Itmo.ObjectOrientedProgramming.Lab2.Tests.Mocks;
 using Xunit;
@@ -12,7 +12,7 @@ public sealed class ArchivingRecipientTests
     public void Deliver_ShouldCallArchiverOnce()
     {
         var archiver = new ArchiverMock { ExpectedCalls = 1 };
-        var sut = new ArchiverRecipient(archiver);
+        var sut = new ArchiverAddressee(archiver);
 
         var message = new Message("t", "b", Priority.Low);
         sut.Send(message);

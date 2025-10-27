@@ -2,23 +2,16 @@
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
-public sealed record Message
+public sealed record class Message(NonEmptyText Title, NonEmptyText Body, Priority Priority)
 {
-    public Message(string title, string body, Priority priority)
+    public static Result<Message> Create(string? title, string? body, Priority priority)
     {
-        if (string.IsNullOrWhiteSpace(title))
-            throw new ArgumentException("Title cannot be null or whitespace.", nameof(title));
+        Result<NonEmptyText> t = NonEmptyText.TryCreate(title);
+        if (!t.IsSuccess) return Result<Message>.Fail(t.Code, t.Message);
 
-        if (string.IsNullOrWhiteSpace(body))
-            throw new ArgumentException("Body cannot be null or whitespace.", nameof(body));
-        Title = title;
-        Body = body;
-        Priority = priority;
+        Result<NonEmptyText> b = NonEmptyText.TryCreate(body);
+        if (!b.IsSuccess) return Result<Message>.Fail(b.Code, b.Message);
+
+        return Result<Message>.Ok(new(t.Value, b.Value, priority));
     }
-
-    public string Title { get; }
-
-    public string Body { get; }
-
-    public Priority Priority { get; }
 }

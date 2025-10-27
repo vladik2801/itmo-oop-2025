@@ -1,13 +1,13 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Archiving;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Archiving;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
-namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients;
+namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
 
-public class ArchiverRecipient : IRecipient
+public class ArchiverAddressee : IAddressee
 {
     private readonly IArchiver _archiver;
 
-    public ArchiverRecipient(IArchiver archiver)
+    public ArchiverAddressee(IArchiver archiver)
     {
         _archiver = archiver;
     }

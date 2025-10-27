@@ -1,4 +1,4 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Alerts;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Alerts;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 using Xunit;
 

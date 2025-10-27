@@ -1,4 +1,4 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Logging;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Logging;
 using Xunit;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Tests.Mocks;
@@ -15,7 +15,7 @@ public sealed class LoggerMock : ILogger
 
     public void Warn(string text) => Log(text);
 
-    public void ErrorL(string text, Exception? ex = null) => Log(text);
+    public void LogError(string text, Exception? ex = null) => Log(text);
 
     public void Log(string text)
     {

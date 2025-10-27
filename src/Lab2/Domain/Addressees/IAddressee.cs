@@ -1,8 +1,8 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
-namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients;
+namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
 
-public interface IRecipient
+public interface IAddressee
 {
     void Send(Message message);
 }

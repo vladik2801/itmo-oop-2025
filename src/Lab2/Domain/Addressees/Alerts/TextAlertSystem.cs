@@ -1,6 +1,6 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
-namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Alerts;
+namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Alerts;
 
 public class TextAlertSystem : IAlertSystem
 {

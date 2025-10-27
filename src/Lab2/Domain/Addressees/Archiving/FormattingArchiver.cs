@@ -1,7 +1,7 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Formatting;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
-namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Recipients.Archiving;
+namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Archiving;
 
 public class FormattingArchiver : IArchiver
 {
