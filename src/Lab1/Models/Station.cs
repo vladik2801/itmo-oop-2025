@@ -4,30 +4,19 @@ namespace Itmo.ObjectOrientedProgramming.Lab1.Models;
 
 public sealed class Station : IRoute
 {
-    private readonly Time timeBoardByOne;
-    private readonly Speed limitSpeed;
-    private readonly CountPeople countPeople;
-    private readonly double coefficientIncomingPeople = 2;
+    private readonly Time _timeBoardByOne;
+    private readonly Speed _limitSpeed;
+    private readonly CountPeople _countPeople;
+    private readonly double _coefficientIncomingPeople = 2;
 
-    public Station(double limit, int countPeopleInp)
+    public Station(Speed limit, CountPeople countPeopleInp)
     {
-        timeBoardByOne = new Time(2d / 60);
-        limitSpeed = new Speed(limit);
-        countPeople = new CountPeople(countPeopleInp);
+        _timeBoardByOne = new Time(0.03);
+        _limitSpeed = limit;
+        _countPeople = countPeopleInp;
     }
 
-    public bool IsValidLimit(double value) => value < limitSpeed.SpeedMC;
+    public bool IsValidLimit(Speed value) => value < _limitSpeed;
 
-    public double MakeTimeWaitingBoard() => countPeople.Count * timeBoardByOne.Seconds;
-
-    public void Simulate(Train train, Result result)
-    {
-        if (!IsValidLimit(train.SpeedTrain.SpeedMC))
-        {
-            result.MakeFalse();
-            return;
-        }
-
-        result.AddTimeValue(MakeTimeWaitingBoard() * coefficientIncomingPeople);
-    }
+    public Time MakeTimeWaitingBoard() => new(_countPeople.Value * _timeBoardByOne.Value * _coefficientIncomingPeople);
 }

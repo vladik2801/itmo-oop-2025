@@ -2,11 +2,11 @@
 
 public sealed record Accuracy
 {
-    public double Time { get; }
-
-    public Accuracy(int seconds)
+    public Accuracy(int value)
     {
-        if (seconds <= 0) throw new ArgumentOutOfRangeException(nameof(seconds), "Accuracy must be positive!");
-        Time = seconds;
+        if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value), "Accuracy must be positive!");
+        Value = value;
     }
+
+    public double Value { get; }
 }

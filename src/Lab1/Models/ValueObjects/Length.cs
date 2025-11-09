@@ -2,10 +2,15 @@
 
 public sealed record Length
 {
-    public double Metres { get; }
-
-    public Length(double metres)
+    public Length(double value)
     {
-        Metres = metres;
+        Value = value;
+    }
+
+    public double Value { get; }
+
+    public static Length operator -(Length length1, Length length2)
+    {
+        return new Length(length1.Value - length2.Value);
     }
 }

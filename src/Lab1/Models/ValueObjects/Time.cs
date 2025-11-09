@@ -2,11 +2,13 @@
 
 public sealed record Time
 {
-    public double Seconds { get; }
-
-    public Time(double timeInp)
+    public Time(double value)
     {
-        if (timeInp < 0) throw new ArgumentOutOfRangeException(nameof(timeInp), "Time must be positive!");
-        Seconds = timeInp;
+        if (value < 0) throw new ArgumentOutOfRangeException(nameof(value), "Time must be positive!");
+        Value = value;
     }
+
+    public double Value { get; }
+
+    public static Time operator +(Time t1, Time t2) => new(t1.Value + t2.Value);
 }

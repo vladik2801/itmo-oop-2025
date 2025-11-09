@@ -2,10 +2,15 @@
 
 public sealed record Boost
 {
-    public double BoostMC { get; }
-
-    public Boost(double boostInp)
+    public Boost(double value)
     {
-        BoostMC = boostInp;
+        Value = value;
+    }
+
+    public double Value { get; }
+
+    public Boost CreateFromPowerAndWeight(Power power, Weight weight)
+    {
+        return new(power.Value / weight.Value);
     }
 }

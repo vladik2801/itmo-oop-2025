@@ -2,11 +2,11 @@
 
 public sealed record CountPeople
 {
-    public int Count { get; }
-
-    public CountPeople(int count)
+    public CountPeople(int value)
     {
-        if (count < 0) throw new ArgumentOutOfRangeException(nameof(count), "Count of people must be positive!");
-        Count = count;
+        if (value < 0) throw new ArgumentOutOfRangeException(nameof(value), "Count of people must be positive!");
+        Value = value;
     }
+
+    public int Value { get; }
 }

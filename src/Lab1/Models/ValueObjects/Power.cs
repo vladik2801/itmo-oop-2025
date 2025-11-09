@@ -2,10 +2,35 @@
 
 public sealed record Power
 {
-    public double Nutone { get; }
-
-    public Power(double powerInp)
+    public Power(double value)
     {
-        Nutone = powerInp;
+        Value = value;
+    }
+
+    public double Value { get; }
+
+    public static Power operator +(Power power1, Power power2)
+    {
+        return new(power1.Value + power2.Value);
+    }
+
+    public static bool operator >=(Power power1, Power power2)
+    {
+        return power1.Value >= power2.Value;
+    }
+
+    public static bool operator <=(Power power1, Power power2)
+    {
+        return power1.Value <= power2.Value;
+    }
+
+    public static bool operator <(Power power1, Power power2)
+    {
+        return power1.Value < power2.Value;
+    }
+
+    public static bool operator >(Power power1, Power power2)
+    {
+        return power1.Value > power2.Value;
     }
 }

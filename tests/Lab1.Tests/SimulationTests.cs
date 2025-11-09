@@ -1,4 +1,5 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab1.Models;
+using Itmo.ObjectOrientedProgramming.Lab1.Models.ValueObjects;
 using Xunit;
 
 namespace Itmo.ObjectOrientedProgramming.Lab1.Tests;
@@ -6,123 +7,146 @@ namespace Itmo.ObjectOrientedProgramming.Lab1.Tests;
 public class SimulationTests
 {
     [Fact]
-    public void Train_has_too_more_power()
+    public void Move_Should_Fail_When_TrainHasTooMuchPower()
     {
-        Train train = new(500, 100, 3, 10000);
-        MagneticPath mpath = new(2000, 200);
-        Simulation calc = new();
+        // Arrange
+        Train train = new(new(500), new(100), new(3));
+        MagneticPath mpath = new(new(2000), new(200));
+        Route route = new([mpath], new(1000));
 
-        calc.Calculator(train, mpath);
+        // Act
+        RouteResult result = route.Move(train);
 
-        string message = calc.ResultSimulation.MakeResult();
-
-        Assert.False(calc.ResultSimulation.IsSuccessfully);
-        Assert.Equal("Fail!", message);
+        // Assert
+        RouteResult.ErrorRoute error = Assert.IsType<RouteResult.ErrorRoute>(result);
+        Assert.Equal("Limit train power", error.LogError);
     }
 
     [Fact]
-    public void Train_has_more_speed_than_station_limit()
+    public void Move_Should_Fail_When_TrainSpeedExceedsStationLimit()
     {
-        Train train = new(500, 10000, 3, 10000);
-        MagneticPath mpath = new(3000, 300);
-        Station station = new(10, 100);
-        Simulation calc = new();
+        // Arrange
+        Train train = new(new(500), new(10000), new(3));
+        MagneticPath mpath = new(new(3000), new(30));
+        Station station = new(new(10), new(100));
+        Route route = new([mpath, station], new(1000));
 
-        calc.Calculator(train, mpath, station);
+        // Act
+        RouteResult result = route.Move(train);
 
-        string message = calc.ResultSimulation.MakeResult();
-
-        Assert.False(calc.ResultSimulation.IsSuccessfully);
-        Assert.Equal("Fail!", message);
+        // Assert
+        RouteResult.ErrorRoute error = Assert.IsType<RouteResult.ErrorRoute>(result);
+        Assert.Equal("Limit station speed", error.LogError);
     }
 
     [Fact]
-    public void Train_has_more_speed_than_limit_route()
+    public void Move_Should_Fail_When_TrainSpeedExceedsRouteLimit()
     {
-        Train train = new(500, 5000, 3, 40);
-        MagneticPath mpath = new(3000, 4000);
-        Simulation calc = new();
+        // Arrange
+        Train train = new(new(500), new(9000), new(3));
+        MagneticPath mpath = new(new(1000), new(200));
+        Route route = new([mpath], new(20));
 
-        calc.Calculator(train, mpath);
+        // Act
+        RouteResult result = route.Move(train);
 
-        string message = calc.ResultSimulation.MakeResult();
-
-        Assert.False(calc.ResultSimulation.IsSuccessfully);
-        Assert.Equal("Fail!", message);
+        // Assert
+        RouteResult.ErrorRoute error = Assert.IsType<RouteResult.ErrorRoute>(result);
+        Assert.Equal("Limit route speed", error.LogError);
     }
 
     [Fact]
-    public void Train_has_normal_speed_and_normal_way()
+    public void Move_Should_CompleteSuccessfully_When_TrainSpeedAndRouteAreNormal()
     {
-        Train train = new(400, 1000, 5, 450);
-        MagneticPath mpath = new(1000, 10);
-        RailPath path = new(5000);
-        Simulation calc = new();
+        // Arrange
+        Train train = new(new(400), new(10000), new(5));
+        MagneticPath mpath = new(new(1000), new(10));
+        RailPath path = new(new(5000));
+        Route route = new([mpath, path], new(400));
+        Time expectedTime = new(1285);
 
-        calc.Calculator(train, mpath, path);
+        // Act
+        RouteResult result = route.Move(train);
 
-        Assert.True(calc.ResultSimulation.IsSuccessfully);
-        Assert.Equal(700, calc.ResultSimulation.TimeTrain.Seconds);
+        // Assert
+        var success = result as RouteResult.SuccessRoute;
+        Assert.Equal(expectedTime, success?.Time);
     }
 
     [Fact]
-    public void Normal_speed_fromMpath_path_station_path()
+    public void Move_Should_CompleteSuccessfully_When_TrainSpeedMatchesStationPathRequirements()
     {
-        Train train = new(600, 2000, 3, 300);
-        MagneticPath mpath = new(600, 20);
-        RailPath path = new(3000);
-        Station station = new(300, 50);
-        RailPath path2 = new(1000);
-        Simulation calc = new();
+        // Arrange
+        Train train = new(new(600), new(2000), new(3));
+        MagneticPath mpath = new(new(600), new(20));
+        RailPath path = new(new(3000));
+        Station station = new(new(300), new(50));
+        RailPath path2 = new(new(1000));
+        Route route = new([mpath, path, station, path2], new(600));
+        Time expectedTime = new(1530);
 
-        calc.Calculator(train, mpath, path, station, path2);
+        // Act
+        RouteResult result = route.Move(train);
 
-        Assert.True(calc.ResultSimulation.IsSuccessfully);
-        Assert.Equal(588.33, calc.ResultSimulation.TimeTrain.Seconds);
+        // Assert
+        var success = result as RouteResult.SuccessRoute;
+        Assert.Equal(expectedTime, success?.Time);
     }
 
     [Fact]
-    public void Unnormal_speed_fromMpath_path_MpathLow_station_path_MpathHigh_path_MpathLow()
+    public void Move_Should_HandleSpeedChanges_When_TransitioningThroughMultiplePathTypesWithDifferentLimits()
     {
-        Train train = new(600, 2000, 3, 75);
-        MagneticPath mpath = new(600, 150);
-        RailPath path = new(1000);
-        MagneticPath mpath2 = new(600, -150);
-        Station station = new(75, 50);
-        RailPath path2 = new(2000);
-        MagneticPath mpath3 = new(600, 250);
-        RailPath path3 = new(1000);
-        MagneticPath mpath4 = new(600, -250);
-        Simulation calc = new();
+        // Arrange
+        Train train = new(new(600), new(20000), new(3));
+        MagneticPath mpath = new(new(600), new(10));
+        RailPath path = new(new(500));
+        MagneticPath mpath2 = new(new(600), new(-10));
+        Station station = new(new(75), new(50));
+        RailPath path2 = new(new(200));
+        MagneticPath mpath3 = new(new(600), new(25));
+        RailPath path3 = new(new(1000));
+        MagneticPath mpath4 = new(new(600), new(-25));
+        Route route = new([mpath, path, mpath2, station, path2, mpath3, path3, mpath4], new(600));
+        Time expectedTime = new(1419);
 
-        calc.Calculator(train, mpath, path, mpath2, station, path2, mpath3, path3, mpath4);
+        // Act
+        RouteResult result = route.Move(train);
 
-        Assert.True(calc.ResultSimulation.IsSuccessfully);
-        Assert.Equal(330.33, calc.ResultSimulation.TimeTrain.Seconds);
+        // Assert
+        var success = result as RouteResult.SuccessRoute;
+        Assert.Equal(expectedTime, success?.Time);
     }
 
     [Fact]
-    public void Train_without_boost()
+    public void Move_Should_Fail_When_TrainWithoutBoostAttemptsLongRoute()
     {
-        Train train = new(500, 1000, 3, 75);
-        RailPath path = new(2000);
-        Simulation calc = new();
+        // Arrange
+        Train train = new(new(500), new(1000), new(3));
+        RailPath path = new(new(2000));
+        Route route = new([path], new(400));
 
-        calc.Calculator(train, path);
+        // Act
+        RouteResult result = route.Move(train);
 
-        Assert.False(calc.ResultSimulation.IsSuccessfully);
+        // Assert
+        RouteResult.ErrorRoute error = Assert.IsType<RouteResult.ErrorRoute>(result);
+        Assert.Equal("Boost or speed is equal Zero", error.LogError);
     }
 
     [Fact]
-    public void Train_go_back()
+    public void Move_Should_Fail_When_TrainEncountersReverseMagneticPath()
     {
-        Train train = new(500, 1000, 3, 75);
-        MagneticPath mpath1 = new(1000, 10);
-        MagneticPath mpath2 = new(1000, -20);
-        Simulation calc = new();
+        // Arrange
+        Train train = new(new(500), new(10000), new(3));
+        MagneticPath mpath1 = new(new(100), new(10));
+        MagneticPath mpath2 = new(new(100), new(-20));
+        Route route = new([mpath1, mpath2], new(400));
 
-        calc.Calculator(train, mpath1, mpath2);
+        // Act
+        RouteResult result = route.Move(train);
 
-        Assert.False(calc.ResultSimulation.IsSuccessfully);
+        // Assert
+        RouteResult.ErrorRoute error = Assert.IsType<RouteResult.ErrorRoute>(result);
+        Assert.Equal("Speed is negative", error.LogError);
     }
 }
