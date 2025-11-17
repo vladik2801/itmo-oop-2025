@@ -1,5 +1,5 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Logging;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
+using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
 
@@ -16,16 +16,7 @@ public class LoggingAddressees : IAddressee
 
     public void Send(Message message)
     {
-        _logger.Info($"Deliver start → {_addressee.GetType().Name}: '{message.Title}' ({message.Priority})");
-        try
-        {
-            _addressee.Send(message);
-            _logger.Info($"Deliver success → {_addressee.GetType().Name}");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Deliver failed → {_addressee.GetType().Name}", ex);
-            throw;
-        }
+        _logger.Log(message.Title);
+        _addressee.Send(message);
     }
 }

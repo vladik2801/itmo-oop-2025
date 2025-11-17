@@ -2,42 +2,22 @@
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Formatting;
 
-public class FileFormatter : IMessageFormatter, IDisposable
+public sealed class FileFormatter : IMessageFormatter
 {
-    private readonly StreamWriter _writer;
-    private bool _disposed;
+    private readonly string _filePath;
 
-    public FileFormatter(string path, bool append = true)
+    public FileFormatter(NonEmptyText path)
     {
-        if (string.IsNullOrEmpty(path))
-            throw new ArgumentException("Path is required", nameof(path));
-
-        string full = Path.GetFullPath(path);
-        string? dir = Path.GetDirectoryName(full);
-        if (!string.IsNullOrEmpty(dir))
-            Directory.CreateDirectory(dir);
-        _writer = new StreamWriter(new FileStream(
-            full,
-            append ? FileMode.Append : FileMode.Create,
-            FileAccess.Write,
-            FileShare.Read));
+        _filePath = path.Value;
     }
 
-    public void Format(Message message)
+    public void WriteTitleMessage(string title)
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-        _writer.WriteLine("# " + message.Title);
-        _writer.WriteLine(string.Empty);
-        _writer.WriteLine(message.Body);
-        _writer.WriteLine(string.Empty);
-        _writer.WriteLine("> Priority: " + message.Priority);
-        _writer.Flush();
+        File.WriteAllText(_filePath, title);
     }
 
-    public void Dispose()
+    public void WriteBodyMessage(string body)
     {
-        if (_disposed) return;
-        _disposed = true;
-        _writer.Dispose();
+        File.WriteAllText(_filePath, body);
     }
 }

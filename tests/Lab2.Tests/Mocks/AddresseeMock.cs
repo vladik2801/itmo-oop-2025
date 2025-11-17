@@ -1,25 +1,34 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
+using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
 using Xunit;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Tests.Mocks;
 
 public sealed class AddresseeMock : IAddressee
 {
+    private readonly int _expectedCalls;
+
+    private readonly Message _expectedMessage;
+
+    private Message? _message;
+
     private int _calls;
 
-    public int ExceptedCalls { get; set; } = 1;
-
-    public Message? ExceptedMessage { get; set; }
+    public AddresseeMock(int expectedCalls, Message expectedMessage)
+    {
+        _expectedCalls = expectedCalls;
+        _expectedMessage = expectedMessage;
+    }
 
     public void Send(Message message)
     {
         _calls++;
-        if (ExceptedMessage is not null && !ReferenceEquals(ExceptedMessage, message))
-        {
-            throw new Xunit.Sdk.XunitException("Unexcepted message was not received");
-        }
+        _message = message;
     }
 
-    public void Verify() => Assert.Equal(ExceptedCalls, _calls);
+    public void Verify()
+    {
+        Assert.Equal(_expectedCalls, _calls);
+        Assert.Equal(_expectedMessage, _message);
+    }
 }

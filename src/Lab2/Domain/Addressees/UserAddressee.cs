@@ -1,19 +1,19 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Users;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
+using Itmo.ObjectOrientedProgramming.Lab2.Domain.Users;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
 
 public class UserAddressee : IAddressee
 {
+    private readonly User _user;
+
     public UserAddressee(User user)
     {
-        User = user;
+        _user = user;
     }
-
-    public User User { get; }
 
     public void Send(Message message)
     {
-        User.Receive(message);
+        _user.Receive(message);
     }
 }

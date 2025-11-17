@@ -1,8 +1,8 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
-
-namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Formatting;
+﻿namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Formatting;
 
 public interface IMessageFormatter
 {
-    void Format(Message message);
+    void WriteTitleMessage(string title);
+
+    void WriteBodyMessage(string body);
 }

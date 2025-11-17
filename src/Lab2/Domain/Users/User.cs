@@ -5,30 +5,25 @@ namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Users;
 
 public sealed class User
 {
-    private readonly List<InboxItem> _inbox = new();
+    private readonly Dictionary<Message, ReadState> _inbox;
 
-    public User(int userid, string username)
+    public User(NonEmptyText username)
     {
-        UserId = userid;
-        UserName = username;
+        UserName = username.Value;
+        _inbox = new Dictionary<Message, ReadState>();
     }
-
-    public int UserId { get; }
 
     public string UserName { get; }
 
-    public IReadOnlyList<InboxItem> Inbox => _inbox;
-
-    public InboxItem Receive(Message message)
+    public void Receive(Message message)
     {
-        var entryBox = new InboxItem(message, ReadState.Unread);
-        _inbox.Add(entryBox);
-        return entryBox;
+        _inbox[message] = ReadState.Unread;
     }
 
-    public Result MakeRead(InboxItem inboxItem)
+    public Result MakeRead(Message message)
     {
-        if (_inbox.Contains(inboxItem)) return Result.Fail("Not Found", "Item not found");
-        return inboxItem.MakeRead();
+        if (!_inbox.ContainsKey(message)) return new Result.NotFound();
+        if (_inbox[message] == ReadState.Read) return new Result.AlreadyRead();
+        return new Result.Succes();
     }
 }

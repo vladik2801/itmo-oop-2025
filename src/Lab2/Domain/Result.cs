@@ -1,44 +1,12 @@
 ﻿namespace Itmo.ObjectOrientedProgramming.Lab2.Domain;
 
-public readonly record struct Result
+public abstract record Result
 {
-    public bool IsSuccess { get; }
+    private Result() { }
 
-    public string? Code { get; }
+    public sealed record Succes : Result;
 
-    public string? Message { get; }
+    public sealed record AlreadyRead : Result;
 
-    private Result(bool ok, string? code, string? message)
-    {
-        IsSuccess = ok;
-        Code = code;
-        Message = message;
-    }
-
-    public static Result Ok() => new(true, null, null);
-
-    public static Result Fail(string? code, string? message = null) => new(false, code, message);
-}
-
-public readonly record struct Result<T>
-{
-    public bool IsSuccess { get; }
-
-    public T? Value { get; }
-
-    public string? Code { get; }
-
-    public string? Message { get; }
-
-    private Result(bool ok, T? value, string? code, string? message)
-    {
-        IsSuccess = ok;
-        Value = value;
-        Code = code;
-        Message = message;
-    }
-
-    public static Result<T> Ok(T value) => new(true, value, null, null);
-
-    public static Result<T> Fail(string? code, string? message) => new(false, default, code, message);
+    public sealed record NotFound : Result;
 }

@@ -1,19 +1,14 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
 
 public class GroupAddressee : IAddressee
 {
-    private readonly List<IAddressee> _group = new();
+    private readonly IReadOnlyCollection<IAddressee> _group;
 
     public GroupAddressee(IEnumerable<IAddressee> group)
     {
-        if (group is not null) _group.AddRange(group);
-    }
-
-    public void Add(IAddressee addressee)
-    {
-        _group.Add(addressee);
+        _group = group.ToList();
     }
 
     public void Send(Message message)

@@ -1,43 +1,37 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
+using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Topics;
 
 public class Topic
 {
-    private readonly List<IAddressee> _recipients = new();
+    private readonly List<IAddressee> _addressees;
 
-    public Topic(IEnumerable<IAddressee> recipients, string name)
+    public Topic(IEnumerable<IAddressee> addressees, NonEmptyText name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Topic name is required.", nameof(name));
-        Name = name;
-        foreach (IAddressee recipient in recipients)
-        {
-            AddRecipient(recipient);
-        }
+        Name = name.Value;
+        _addressees = addressees.ToList();
     }
-
-    public IReadOnlyCollection<IAddressee> Recipients => _recipients;
 
     public string Name { get; }
 
-    public void AddRecipient(IAddressee addressee)
+    public void AddAddressee(IAddressee addressee)
     {
         ArgumentNullException.ThrowIfNull(addressee, nameof(addressee));
-        _recipients.Add(addressee);
+        _addressees.Add(addressee);
     }
 
-    public void RemoveRecipient(IAddressee addressee)
+    public void RemoveAddressee(IAddressee addressee)
     {
-        _recipients.Remove(addressee);
+        _addressees.Remove(addressee);
     }
 
     public void Send(Message message)
     {
-        foreach (IAddressee recipient in _recipients)
+        foreach (IAddressee addressee in _addressees)
         {
-            recipient.Send(message);
+            addressee.Send(message);
         }
     }
 }

@@ -1,13 +1,13 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Archiving;
 
 public class InMemoryArchiver : IArchiver
 {
-    private readonly List<Message> _messages = new();
+    private readonly List<Message> _messagesArchive = new();
 
     public void Archive(Message message)
     {
-        _messages.Add(message);
+        _messagesArchive.Add(message);
     }
 }

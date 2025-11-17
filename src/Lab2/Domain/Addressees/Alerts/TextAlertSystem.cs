@@ -1,18 +1,16 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
-
-namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Alerts;
+﻿namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Alerts;
 
 public class TextAlertSystem : IAlertSystem
 {
     private readonly string _prefix;
 
-    public TextAlertSystem(string prefix = "[Alert System]")
+    public TextAlertSystem(string prefix)
     {
         _prefix = prefix;
     }
 
-    public void Notify(Message message, string reason)
+    public void Notify()
     {
-        Console.WriteLine($"{_prefix} {reason} — Message: '{message.Title}'");
+        Console.WriteLine(_prefix);
     }
 }

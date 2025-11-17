@@ -1,10 +1,8 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
-
-namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Alerts;
+﻿namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Alerts;
 
 public class SoundAlertSystem : IAlertSystem
 {
-    public void Notify(Message message, string reason)
+    public void Notify()
     {
         Console.Beep();
     }

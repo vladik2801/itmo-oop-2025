@@ -1,4 +1,4 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Archiving;
 

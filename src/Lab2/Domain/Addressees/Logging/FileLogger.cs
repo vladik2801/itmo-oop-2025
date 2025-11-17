@@ -1,52 +1,18 @@
-﻿namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Logging;
+﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 
-public class FileLogger : ILogger, IDisposable
+namespace Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Logging;
+
+public class FileLogger : ILogger
 {
-    private readonly StreamWriter _writer;
-    private bool _disposed;
+    private readonly string _path;
 
-    public FileLogger(string path, bool append = true)
+    public FileLogger(NonEmptyText path)
     {
-        if (string.IsNullOrEmpty(path))
-            throw new ArgumentException("Path is required", nameof(path));
-
-        string full = Path.GetFullPath(path);
-        string? dir = Path.GetDirectoryName(full);
-        if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
-
-        _writer = new StreamWriter(new FileStream(
-            full,
-            append ? FileMode.Append : FileMode.Create,
-            FileAccess.Write,
-            FileShare.Read));
+        _path = path.Value;
     }
 
-    public void Info(string text)
+    public void Log(string text)
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-        _writer.WriteLine($"[INFO ] {DateTime.UtcNow:O} {text}");
-        _writer.Flush();
-    }
-
-    public void Warn(string text)
-    {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-        _writer.WriteLine($"[WARN ] {DateTime.UtcNow:O} {text}");
-        _writer.Flush();
-    }
-
-    public void LogError(string text, Exception? ex = null)
-    {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-        _writer.WriteLine($"[ERROR] {DateTime.UtcNow:O} {text}");
-        if (ex is not null) _writer.WriteLine(ex.ToString());
-        _writer.Flush();
-    }
-
-    public void Dispose()
-    {
-        if (_disposed) return;
-        _disposed = true;
-        _writer.Dispose();
+        File.WriteAllText(_path, text);
     }
 }
