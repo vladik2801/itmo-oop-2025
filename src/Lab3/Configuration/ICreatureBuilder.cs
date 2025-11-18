@@ -1,0 +1,8 @@
+﻿using Itmo.ObjectOrientedProgramming.Lab3.Creatures;
+
+namespace Itmo.ObjectOrientedProgramming.Lab3.Configuration;
+
+public interface ICreatureBuilder
+{
+    ICreature Build();
+}
