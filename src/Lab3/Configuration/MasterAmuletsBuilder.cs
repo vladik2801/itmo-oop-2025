@@ -4,47 +4,20 @@ using Itmo.ObjectOrientedProgramming.Lab3.ValueObject;
 
 namespace Itmo.ObjectOrientedProgramming.Lab3.Configuration;
 
-public class MasterAmuletsBuilder : ICreatureBuilder
+public sealed class MasterAmuletsBuilder : CreatureBuilderBase
 {
-    private readonly ModifierApplier _modifierApplier = new();
-    private HealthPoint _healthPoint = new HealthPoint(0);
-    private AttackPoint _attackPoint = new AttackPoint(0);
-    private bool _isMagicShield = false;
-    private bool _isAttackSkill = false;
+    private readonly ModifierApplier _modifierApplier;
 
-    public MasterAmuletsBuilder WithBaseStats(HealthPoint healthPoint, AttackPoint attackPoint)
+    public MasterAmuletsBuilder(ModifierApplier modifierApplier)
     {
-        _healthPoint = healthPoint;
-        _attackPoint = attackPoint;
-        return this;
+        _modifierApplier = modifierApplier;
     }
 
-    public MasterAmuletsBuilder WithMagicShield()
+    protected override ICreature CreateCreature(HealthPoint healthPoint, AttackPoint attackPoint)
     {
-        _isMagicShield = true;
-        return this;
-    }
-
-    public MasterAmuletsBuilder WithAttackSkill()
-    {
-        _isAttackSkill = true;
-        return this;
-    }
-
-    public ICreature Build()
-    {
-        ICreature creature = new MasterAmulets(_healthPoint, _attackPoint);
-
-        if (_isMagicShield)
-        {
-            creature = _modifierApplier.Apply(creature, ModifiersType.MagicShield);
-        }
-
-        if (_isAttackSkill)
-        {
-            creature = _modifierApplier.Apply(creature, ModifiersType.AttackSkill);
-        }
-
+        ICreature creature = new MasterAmulets(healthPoint, attackPoint);
+        creature = _modifierApplier.Apply(creature, ModifiersType.MagicShield);
+        creature = _modifierApplier.Apply(creature, ModifiersType.AttackSkill);
         return creature;
     }
 }

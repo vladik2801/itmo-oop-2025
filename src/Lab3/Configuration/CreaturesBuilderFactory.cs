@@ -1,9 +1,12 @@
-﻿using Itmo.ObjectOrientedProgramming.Lab3.ValueObject;
+﻿using Itmo.ObjectOrientedProgramming.Lab3.Modifiers;
+using Itmo.ObjectOrientedProgramming.Lab3.ValueObject;
 
 namespace Itmo.ObjectOrientedProgramming.Lab3.Configuration;
 
 public class CreaturesBuilderFactory : ICreatureBuilderFactory
 {
+    private readonly ModifierApplier _modifierApplier = new();
+
     public ICreatureBuilder CreateCombatAnalystBuilder()
     {
         AttackPoint attackPoint = new(2);
@@ -15,7 +18,7 @@ public class CreaturesBuilderFactory : ICreatureBuilderFactory
     {
         AttackPoint attackPoint = new(1);
         HealthPoint healthPoint = new(6);
-        return new MasterAmuletsBuilder().WithBaseStats(healthPoint, attackPoint);
+        return new EvilFighterBuilder().WithBaseStats(healthPoint, attackPoint);
     }
 
     public ICreatureBuilder CreateImmortalHorrorBuilder()
@@ -36,6 +39,6 @@ public class CreaturesBuilderFactory : ICreatureBuilderFactory
     {
         AttackPoint attackPoint = new(5);
         HealthPoint healthPoint = new(2);
-        return new MasterAmuletsBuilder().WithBaseStats(healthPoint, attackPoint).WithMagicShield().WithAttackSkill();
+        return new MasterAmuletsBuilder(_modifierApplier).WithBaseStats(healthPoint, attackPoint);
     }
 }
