@@ -8,13 +8,13 @@ public sealed class AddresseeMock : IAddressee
 {
     private readonly int _expectedCalls;
 
-    private readonly Message _expectedMessage;
+    private readonly Message? _expectedMessage;
 
     private Message? _message;
 
     private int _calls;
 
-    public AddresseeMock(int expectedCalls, Message expectedMessage)
+    public AddresseeMock(int expectedCalls, Message? expectedMessage = null)
     {
         _expectedCalls = expectedCalls;
         _expectedMessage = expectedMessage;
@@ -29,6 +29,9 @@ public sealed class AddresseeMock : IAddressee
     public void Verify()
     {
         Assert.Equal(_expectedCalls, _calls);
-        Assert.Equal(_expectedMessage, _message);
+        if (_expectedMessage != null)
+        {
+            Assert.Equal(_expectedMessage, _message);
+        }
     }
 }

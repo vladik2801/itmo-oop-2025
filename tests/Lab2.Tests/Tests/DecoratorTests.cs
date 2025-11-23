@@ -1,6 +1,5 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 using Itmo.ObjectOrientedProgramming.Lab2.Tests.Mocks;
 using Xunit;
 
@@ -11,37 +10,46 @@ public sealed class DecoratorTests
     [Fact]
     public void BelowThreshold_ShouldNotCallInner()
     {
-        var inner = new AddresseeMock { ExceptedCalls = 0 };
-
+        // Arrange
+        var inner = new AddresseeMock(0);
         var sut = new FilterAddressees(inner, Priority.High);
-        var message = new Message("t", "b", Priority.Medium);
+        var message = new Message(new("t"), new("b"), Priority.Medium);
+
+        // Act
         sut.Send(message);
 
+        // Assert
         inner.Verify();
     }
 
     [Fact]
     public void MeetThreshold_ShouldCallInnerOnce()
     {
-        var inner = new AddresseeMock { ExceptedCalls = 1 };
+        // Arrange
+        var inner = new AddresseeMock(1);
         var sut = new FilterAddressees(inner, Priority.Medium);
+        var message = new Message(new("t"), new("b"), Priority.Medium);
 
-        var message = new Message("t", "b", Priority.Medium);
+        // Act
         sut.Send(message);
 
+        // Assert
         inner.Verify();
     }
 
     [Fact]
-    public void ShouldLogAndThenSend()
+    public void Send_ShouldLogTwiceAndCallInnerOnce()
     {
-        var logger = new LoggerMock { ExpectedCalls = 2, ExpectedSubstring = "Deliver" };
-        var inner = new AddresseeMock { ExceptedCalls = 1 };
+        // Arrange
+        var logger = new LoggerMock(1);
+        var inner = new AddresseeMock(1);
         var sut = new LoggingAddressees(inner, logger);
+        var msg = new Message(new("t"), new("b"), Priority.High);
 
-        var msg = new Message("t", "b", Priority.High);
+        // Act
         sut.Send(msg);
 
+        // Assert
         logger.Verify();
         inner.Verify();
     }

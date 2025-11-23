@@ -24,6 +24,7 @@ public sealed class User
     {
         if (!_inbox.ContainsKey(message)) return new Result.NotFound();
         if (_inbox[message] == ReadState.Read) return new Result.AlreadyRead();
+        _inbox[message] = ReadState.Read;
         return new Result.Succes();
     }
 }

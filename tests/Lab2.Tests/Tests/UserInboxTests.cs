@@ -1,7 +1,6 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.Users;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 using Xunit;
 
 namespace Itmo.ObjectOrientedProgramming.Lab2.Tests.Tests;
@@ -9,33 +8,48 @@ namespace Itmo.ObjectOrientedProgramming.Lab2.Tests.Tests;
 public sealed class UserInboxTests
 {
     [Fact]
-    public void Receive_ShouldCreateUnreadEntry()
+    public void MarkRead_ShouldCreateUnreadEntry()
     {
-        var user = new User(1, "Vlad");
-        var message = new Message("t", "b", Priority.Medium);
+        // Arrange
+        var user = new User(new("Vlad"));
+        var message = new Message(new("t"), new("b"), Priority.Medium);
 
-        InboxItem entry = user.Receive(message);
+        // Act
+        user.Receive(message);
+        Result fisrt = user.MakeRead(message);
 
-        Assert.Equal(ReadState.Unread, entry.ReadState);
+        // Assert
+        Assert.IsType<Result.Succes>(fisrt);
     }
 
     [Fact]
     public void MarkRead_Twice_ShouldThrow()
     {
-        var user = new User(1, "Vlad");
+        // Arrange
+        var user = new User(new("Vlad"));
+        var message = new Message(new("t"), new("b"), Priority.Medium);
 
-        Result<Message> created = Message.Create("t", "b", Priority.Medium);
-        Assert.True(created.IsSuccess);
-        Message message = created.Value ?? throw new Xunit.Sdk.XunitException(
-            "Message.Create returned success but Value is null");
+        // Act
+        user.Receive(message);
+        Result fisrt = user.MakeRead(message);
+        Result second = user.MakeRead(message);
 
-        InboxItem item = user.Receive(message);
+        // Assert
+        Assert.IsType<Result.Succes>(fisrt);
+        Assert.IsType<Result.AlreadyRead>(second);
+    }
 
-        Result first = item.MakeRead();
-        Assert.True(first.IsSuccess);
+    [Fact]
+    public void MarkRead_WhenMessageNotSend_ShouldReturnNotFount()
+    {
+        // Arrange
+        var user = new User(new("Vlad"));
+        var unknownMessage = new Message(new("t"), new("b"), Priority.Medium);
 
-        Result second = item.MakeRead();
-        Assert.False(second.IsSuccess);
-        Assert.Equal("Already read", second.Code);
+        // Act
+        Result result = user.MakeRead(unknownMessage);
+
+        // Assert
+        Assert.IsType<Result.NotFound>(result);
     }
 }

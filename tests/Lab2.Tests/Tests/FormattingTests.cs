@@ -1,6 +1,5 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab2.Domain.Addressees.Archiving;
 using Itmo.ObjectOrientedProgramming.Lab2.Domain.Messaging;
-using Itmo.ObjectOrientedProgramming.Lab2.Domain.ValueObjects;
 using Itmo.ObjectOrientedProgramming.Lab2.Tests.Mocks;
 using Xunit;
 
@@ -11,11 +10,14 @@ public sealed class FormattingTests
     [Fact]
     public void Archive_ShouldCallFormatter()
     {
-        var formatter = new FormatterMock { ExpectedCalls = 1 };
+        // Arrange
+        var formatter = new FormatterMock(new("t"), new("b"));
         var sut = new FormattingArchiver(formatter);
 
-        sut.Archive(new Message("t", "b", Priority.Medium));
+        // Act
+        sut.Archive(new Message(new("t"), new("b"), Priority.Medium));
 
+        // Assert
         formatter.Verify();
     }
 }
