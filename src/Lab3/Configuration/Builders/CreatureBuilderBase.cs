@@ -2,7 +2,7 @@
 using Itmo.ObjectOrientedProgramming.Lab3.Modifiers;
 using Itmo.ObjectOrientedProgramming.Lab3.ValueObject;
 
-namespace Itmo.ObjectOrientedProgramming.Lab3.Configuration;
+namespace Itmo.ObjectOrientedProgramming.Lab3.Configuration.Builders;
 
 public abstract class CreatureBuilderBase : ICreatureBuilder
 {

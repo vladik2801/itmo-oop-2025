@@ -1,5 +1,5 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab3.Board;
-using Itmo.ObjectOrientedProgramming.Lab3.Configuration;
+using Itmo.ObjectOrientedProgramming.Lab3.Configuration.Factories;
 using Itmo.ObjectOrientedProgramming.Lab3.Creatures;
 using Itmo.ObjectOrientedProgramming.Lab3.Modifiers;
 using Itmo.ObjectOrientedProgramming.Lab3.Spells;
@@ -13,12 +13,13 @@ public sealed class BattleTest
     public void Run_WhenFirstBoardHasStrongerCreature_ShouldReturnFirstPlayerWin()
     {
         // Arrange
-        var factory = new DefaultCreatureBuilderFactory();
+        var evilFactory = new EvilFighterBuilderFactory();
+        var combatFactory = new CombatAnalystBuilderFactory();
         var fisrtBoard = new CreatureBoard();
-        ICreature strongCreature = factory.CreateEvilFighterBuilder().Build();
+        ICreature strongCreature = evilFactory.CreateBuilder().Build();
         fisrtBoard.AddCreature(strongCreature);
         var secondBoard = new CreatureBoard();
-        ICreature weakCreature = factory.CreateCombatAnalystBuilder().Build();
+        ICreature weakCreature = combatFactory.CreateBuilder().Build();
         secondBoard.AddCreature(weakCreature);
         var battle = new Battle(fisrtBoard, secondBoard);
 
@@ -33,12 +34,13 @@ public sealed class BattleTest
     public void Run_WhenSecondBoardHasStrongerCreature_ShouldReturnSecondPlayerWin()
     {
         // Arrange
-        var factory = new DefaultCreatureBuilderFactory();
+        var combatFactory = new CombatAnalystBuilderFactory();
+        var evilFactory = new EvilFighterBuilderFactory();
         var fisrtBoard = new CreatureBoard();
-        ICreature strongCreature = factory.CreateCombatAnalystBuilder().Build();
+        ICreature strongCreature = combatFactory.CreateBuilder().Build();
         fisrtBoard.AddCreature(strongCreature);
         var secondBoard = new CreatureBoard();
-        ICreature weakCreature = factory.CreateEvilFighterBuilder().Build();
+        ICreature weakCreature = evilFactory.CreateBuilder().Build();
         secondBoard.AddCreature(weakCreature);
         var battle = new Battle(fisrtBoard, secondBoard);
 
@@ -68,8 +70,8 @@ public sealed class BattleTest
     public void MagicShield_ShouldIgnoreFirstDamage_AndApplySecond()
     {
         // Arrange
-        var factory = new DefaultCreatureBuilderFactory();
-        ICreature baseCreature = factory.CreateCombatAnalystBuilder().Build();
+        var factory = new CombatAnalystBuilderFactory();
+        ICreature baseCreature = factory.CreateBuilder().Build();
         int startHp = baseCreature.HealthPoints.Value;
         var applier = new MagicShieldApplier();
         ICreature shieldCreature = applier.Apply(baseCreature);
@@ -89,14 +91,15 @@ public sealed class BattleTest
     public void AttackSkill_ShouldIncreaseDamageComparedToBaseCreature()
     {
         // Arrange
-        var factory = new DefaultCreatureBuilderFactory();
-        ICreature baseAttacker = factory.CreateCombatAnalystBuilder().Build();
-        ICreature targetWithoutBuff = factory.CreateImmortalHorrorBuilder().Build();
-        ICreature targetWithBuff = factory.CreateImmortalHorrorBuilder().Build();
+        var combatFactory = new CombatAnalystBuilderFactory();
+        var immortalFactory = new ImmortalHorrorBuilderFactory();
+        ICreature baseAttacker = combatFactory.CreateBuilder().Build();
+        ICreature targetWithoutBuff = immortalFactory.CreateBuilder().Build();
+        ICreature targetWithBuff = immortalFactory.CreateBuilder().Build();
         int targetHp = targetWithoutBuff.HealthPoints.Value;
         var applier = new AttackSkillApplier();
         ICreature buffedAttacker =
-            applier.Apply(factory.CreateCombatAnalystBuilder().Build());
+            applier.Apply(combatFactory.CreateBuilder().Build());
 
         // Act
         baseAttacker.Attack(targetWithoutBuff);
@@ -115,8 +118,8 @@ public sealed class BattleTest
     public void PowerSpell_ShouldIncreaseAttackByFive()
     {
         // Arrange
-        var factory = new DefaultCreatureBuilderFactory();
-        ICreature baseCreature = factory.CreateCombatAnalystBuilder().Build();
+        var factory = new CombatAnalystBuilderFactory();
+        ICreature baseCreature = factory.CreateBuilder().Build();
         int startAttack = baseCreature.AttackPoints.Value;
         int startHealth = baseCreature.HealthPoints.Value;
         PowerSpell spell = new();
@@ -133,8 +136,8 @@ public sealed class BattleTest
     public void StaminaSpell_ShouldIncreaseHealthByFive()
     {
         // Arrange
-        var factory = new DefaultCreatureBuilderFactory();
-        ICreature baseCreature = factory.CreateCombatAnalystBuilder().Build();
+        var factory = new CombatAnalystBuilderFactory();
+        ICreature baseCreature = factory.CreateBuilder().Build();
         int startAttack = baseCreature.AttackPoints.Value;
         int startHealth = baseCreature.HealthPoints.Value;
         StaminaSpell spell = new();
@@ -151,8 +154,8 @@ public sealed class BattleTest
     public void AmuletSpell_ShouldGiveMagicShield()
     {
         // Arrange
-        var factory = new DefaultCreatureBuilderFactory();
-        ICreature baseCreature = factory.CreateCombatAnalystBuilder().Build();
+        var factory = new CombatAnalystBuilderFactory();
+        ICreature baseCreature = factory.CreateBuilder().Build();
         int startHealth = baseCreature.HealthPoints.Value;
         AmuletProtectionSpell spell = new();
 
@@ -172,15 +175,16 @@ public sealed class BattleTest
     public void CreatureWithMagicShieldAndAttackSkill_ShouldIgnoreFirstDamage_AndDealMoreDamage()
     {
         // Arrange
-        var factory = new DefaultCreatureBuilderFactory();
+        var combatFactory = new CombatAnalystBuilderFactory();
+        var immortalFactory = new ImmortalHorrorBuilderFactory();
         var magicApplier = new MagicShieldApplier();
         var attackApplier = new AttackSkillApplier();
-        ICreature baseAttacker = factory.CreateCombatAnalystBuilder().Build();
+        ICreature baseAttacker = combatFactory.CreateBuilder().Build();
         ICreature bufAttacker = magicApplier.Apply(baseAttacker);
         bufAttacker = attackApplier.Apply(bufAttacker);
         int bufStartHealth = bufAttacker.HealthPoints.Value;
-        ICreature baseTarget = factory.CreateImmortalHorrorBuilder().Build();
-        ICreature bufTarget = factory.CreateImmortalHorrorBuilder().Build();
+        ICreature baseTarget = immortalFactory.CreateBuilder().Build();
+        ICreature bufTarget = immortalFactory.CreateBuilder().Build();
         int targetStartHp = baseTarget.HealthPoints.Value;
 
         // Act
@@ -200,8 +204,8 @@ public sealed class BattleTest
     public void CreatureClone_ShouldBeIndependentCopy()
     {
         // Arrange
-        var factory = new DefaultCreatureBuilderFactory();
-        ICreature baseCreature = factory.CreateCombatAnalystBuilder().Build();
+        var factory = new CombatAnalystBuilderFactory();
+        ICreature baseCreature = factory.CreateBuilder().Build();
         int baseHpStart = baseCreature.HealthPoints.Value;
         int baseAttackStart = baseCreature.AttackPoints.Value;
 

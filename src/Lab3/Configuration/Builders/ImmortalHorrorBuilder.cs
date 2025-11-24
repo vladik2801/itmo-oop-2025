@@ -1,7 +1,7 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab3.Creatures;
 using Itmo.ObjectOrientedProgramming.Lab3.ValueObject;
 
-namespace Itmo.ObjectOrientedProgramming.Lab3.Configuration;
+namespace Itmo.ObjectOrientedProgramming.Lab3.Configuration.Builders;
 
 public class ImmortalHorrorBuilder : CreatureBuilderBase
 {
