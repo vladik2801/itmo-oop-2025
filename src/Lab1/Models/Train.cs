@@ -14,10 +14,10 @@ public sealed class Train
 
     private Power _powerTrain;
 
-    public Train(Weight weightInp, Power maxpower, Time time)
+    public Train(Weight weightInp, Power maxPower, Time time)
     {
         _weight = weightInp;
-        _maxPower = maxpower;
+        _maxPower = maxPower;
         _accuracyTrain = time;
         _powerTrain = new Power(0);
         SpeedTrain = new Speed(0);
