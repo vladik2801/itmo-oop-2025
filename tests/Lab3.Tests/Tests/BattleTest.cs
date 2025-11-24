@@ -13,12 +13,12 @@ public sealed class BattleTest
     public void Run_WhenFirstBoardHasStrongerCreature_ShouldReturnFirstPlayerWin()
     {
         // Arrange
-        var factory = new CreaturesBuilderFactory();
+        var factory = new DefaultCreatureBuilderFactory();
         var fisrtBoard = new CreatureBoard();
-        ICreature strongCreature = factory.CreateCombatAnalystBuilder().Build();
+        ICreature strongCreature = factory.CreateEvilFighterBuilder().Build();
         fisrtBoard.AddCreature(strongCreature);
         var secondBoard = new CreatureBoard();
-        ICreature weakCreature = factory.CreateEvilFighterBuilder().Build();
+        ICreature weakCreature = factory.CreateCombatAnalystBuilder().Build();
         secondBoard.AddCreature(weakCreature);
         var battle = new Battle(fisrtBoard, secondBoard);
 
@@ -33,12 +33,12 @@ public sealed class BattleTest
     public void Run_WhenSecondBoardHasStrongerCreature_ShouldReturnSecondPlayerWin()
     {
         // Arrange
-        var factory = new CreaturesBuilderFactory();
+        var factory = new DefaultCreatureBuilderFactory();
         var fisrtBoard = new CreatureBoard();
-        ICreature strongCreature = factory.CreateEvilFighterBuilder().Build();
+        ICreature strongCreature = factory.CreateCombatAnalystBuilder().Build();
         fisrtBoard.AddCreature(strongCreature);
         var secondBoard = new CreatureBoard();
-        ICreature weakCreature = factory.CreateCombatAnalystBuilder().Build();
+        ICreature weakCreature = factory.CreateEvilFighterBuilder().Build();
         secondBoard.AddCreature(weakCreature);
         var battle = new Battle(fisrtBoard, secondBoard);
 
@@ -68,17 +68,17 @@ public sealed class BattleTest
     public void MagicShield_ShouldIgnoreFirstDamage_AndApplySecond()
     {
         // Arrange
-        var factory = new CreaturesBuilderFactory();
+        var factory = new DefaultCreatureBuilderFactory();
         ICreature baseCreature = factory.CreateCombatAnalystBuilder().Build();
-        int startHp = baseCreature.HealthPoints;
-        var applier = new ModifierApplier();
-        ICreature shieldCreature = applier.Apply(baseCreature, ModifiersType.MagicShield);
+        int startHp = baseCreature.HealthPoints.Value;
+        var applier = new MagicShieldApplier();
+        ICreature shieldCreature = applier.Apply(baseCreature);
 
         // Act
-        shieldCreature.TakeDamage(3);
-        int hpAfterFirstDamage = shieldCreature.HealthPoints;
-        shieldCreature.TakeDamage(3);
-        int hpAfterSecondDamage = shieldCreature.HealthPoints;
+        shieldCreature.TakeDamage(new(3));
+        int hpAfterFirstDamage = shieldCreature.HealthPoints.Value;
+        shieldCreature.TakeDamage(new(3));
+        int hpAfterSecondDamage = shieldCreature.HealthPoints.Value;
 
         // Assert
         Assert.Equal(startHp, hpAfterFirstDamage);
@@ -89,22 +89,22 @@ public sealed class BattleTest
     public void AttackSkill_ShouldIncreaseDamageComparedToBaseCreature()
     {
         // Arrange
-        var factory = new CreaturesBuilderFactory();
+        var factory = new DefaultCreatureBuilderFactory();
         ICreature baseAttacker = factory.CreateCombatAnalystBuilder().Build();
-        ICreature targetWithoutBuff = factory.CreateEvilFighterBuilder().Build();
-        ICreature targetWithBuff = factory.CreateEvilFighterBuilder().Build();
-        int targetHp = targetWithoutBuff.HealthPoints;
-        var applier = new ModifierApplier();
+        ICreature targetWithoutBuff = factory.CreateImmortalHorrorBuilder().Build();
+        ICreature targetWithBuff = factory.CreateImmortalHorrorBuilder().Build();
+        int targetHp = targetWithoutBuff.HealthPoints.Value;
+        var applier = new AttackSkillApplier();
         ICreature buffedAttacker =
-            applier.Apply(factory.CreateCombatAnalystBuilder().Build(), ModifiersType.AttackSkill);
+            applier.Apply(factory.CreateCombatAnalystBuilder().Build());
 
         // Act
         baseAttacker.Attack(targetWithoutBuff);
-        int hpAfterDamage = targetWithoutBuff.HealthPoints;
+        int hpAfterDamage = targetWithoutBuff.HealthPoints.Value;
         int baseDamage = targetHp - hpAfterDamage;
 
         buffedAttacker.Attack(targetWithBuff);
-        int hpAfterBuffDamage = targetWithBuff.HealthPoints;
+        int hpAfterBuffDamage = targetWithBuff.HealthPoints.Value;
         int buffedDamage = targetHp - hpAfterBuffDamage;
 
         // Assert
@@ -115,53 +115,53 @@ public sealed class BattleTest
     public void PowerSpell_ShouldIncreaseAttackByFive()
     {
         // Arrange
-        var factory = new CreaturesBuilderFactory();
+        var factory = new DefaultCreatureBuilderFactory();
         ICreature baseCreature = factory.CreateCombatAnalystBuilder().Build();
-        int startAttack = baseCreature.AttackPoints;
-        int startHealth = baseCreature.HealthPoints;
+        int startAttack = baseCreature.AttackPoints.Value;
+        int startHealth = baseCreature.HealthPoints.Value;
         PowerSpell spell = new();
 
         // Act
         ICreature result = spell.Cast(baseCreature);
 
         // Assert
-        Assert.Equal(startAttack + 5, result.AttackPoints);
-        Assert.Equal(startHealth, result.HealthPoints);
+        Assert.Equal(startAttack + 5, result.AttackPoints.Value);
+        Assert.Equal(startHealth, result.HealthPoints.Value);
     }
 
     [Fact]
     public void StaminaSpell_ShouldIncreaseHealthByFive()
     {
         // Arrange
-        var factory = new CreaturesBuilderFactory();
+        var factory = new DefaultCreatureBuilderFactory();
         ICreature baseCreature = factory.CreateCombatAnalystBuilder().Build();
-        int startAttack = baseCreature.AttackPoints;
-        int startHealth = baseCreature.HealthPoints;
+        int startAttack = baseCreature.AttackPoints.Value;
+        int startHealth = baseCreature.HealthPoints.Value;
         StaminaSpell spell = new();
 
         // Act
         ICreature result = spell.Cast(baseCreature);
 
         // Assert
-        Assert.Equal(startAttack, result.AttackPoints);
-        Assert.Equal(startHealth + 5, result.HealthPoints);
+        Assert.Equal(startAttack, result.AttackPoints.Value);
+        Assert.Equal(startHealth + 5, result.HealthPoints.Value);
     }
 
     [Fact]
     public void AmuletSpell_ShouldGiveMagicShield()
     {
         // Arrange
-        var factory = new CreaturesBuilderFactory();
+        var factory = new DefaultCreatureBuilderFactory();
         ICreature baseCreature = factory.CreateCombatAnalystBuilder().Build();
-        int startHealth = baseCreature.HealthPoints;
+        int startHealth = baseCreature.HealthPoints.Value;
         AmuletProtectionSpell spell = new();
 
         // Act
         ICreature protectedCreature = spell.Cast(baseCreature);
-        protectedCreature.TakeDamage(3);
-        int healthAfterFirstDamage = protectedCreature.HealthPoints;
-        protectedCreature.TakeDamage(3);
-        int healthAfterSecondDamage = protectedCreature.HealthPoints;
+        protectedCreature.TakeDamage(new(3));
+        int healthAfterFirstDamage = protectedCreature.HealthPoints.Value;
+        protectedCreature.TakeDamage(new(3));
+        int healthAfterSecondDamage = protectedCreature.HealthPoints.Value;
 
         // Assert
         Assert.Equal(startHealth, healthAfterFirstDamage);
@@ -172,23 +172,24 @@ public sealed class BattleTest
     public void CreatureWithMagicShieldAndAttackSkill_ShouldIgnoreFirstDamage_AndDealMoreDamage()
     {
         // Arrange
-        var factory = new CreaturesBuilderFactory();
-        var applier = new ModifierApplier();
+        var factory = new DefaultCreatureBuilderFactory();
+        var magicApplier = new MagicShieldApplier();
+        var attackApplier = new AttackSkillApplier();
         ICreature baseAttacker = factory.CreateCombatAnalystBuilder().Build();
-        ICreature bufAttacker = applier.Apply(baseAttacker, ModifiersType.MagicShield);
-        bufAttacker = applier.Apply(bufAttacker, ModifiersType.AttackSkill);
-        int bufStartHealth = bufAttacker.HealthPoints;
-        ICreature baseTarget = factory.CreateEvilFighterBuilder().Build();
-        ICreature bufTarget = factory.CreateEvilFighterBuilder().Build();
-        int targetStartHp = baseTarget.HealthPoints;
+        ICreature bufAttacker = magicApplier.Apply(baseAttacker);
+        bufAttacker = attackApplier.Apply(bufAttacker);
+        int bufStartHealth = bufAttacker.HealthPoints.Value;
+        ICreature baseTarget = factory.CreateImmortalHorrorBuilder().Build();
+        ICreature bufTarget = factory.CreateImmortalHorrorBuilder().Build();
+        int targetStartHp = baseTarget.HealthPoints.Value;
 
         // Act
-        bufAttacker.TakeDamage(3);
-        int hpAfterFisrtDamage = bufAttacker.HealthPoints;
-        baseTarget.TakeDamage(3);
-        int baseDamage = targetStartHp - baseTarget.HealthPoints;
+        bufAttacker.TakeDamage(new(2));
+        int hpAfterFisrtDamage = bufAttacker.HealthPoints.Value;
+        baseTarget.TakeDamage(new(2));
+        int baseDamage = targetStartHp - baseTarget.HealthPoints.Value;
         baseAttacker.Attack(bufTarget);
-        int bufDamage = targetStartHp - bufTarget.HealthPoints;
+        int bufDamage = targetStartHp - bufTarget.HealthPoints.Value;
 
         // Assert
         Assert.Equal(bufStartHealth, hpAfterFisrtDamage);
@@ -199,18 +200,18 @@ public sealed class BattleTest
     public void CreatureClone_ShouldBeIndependentCopy()
     {
         // Arrange
-        var factory = new CreaturesBuilderFactory();
+        var factory = new DefaultCreatureBuilderFactory();
         ICreature baseCreature = factory.CreateCombatAnalystBuilder().Build();
-        int baseHpStart = baseCreature.HealthPoints;
-        int baseAttackStart = baseCreature.AttackPoints;
+        int baseHpStart = baseCreature.HealthPoints.Value;
+        int baseAttackStart = baseCreature.AttackPoints.Value;
 
         // Act
         ICreature clone = baseCreature.Clone();
-        clone.TakeDamage(3);
+        clone.TakeDamage(new(3));
 
         // Assert
-        Assert.Equal(baseHpStart, baseCreature.HealthPoints);
-        Assert.Equal(baseAttackStart, baseCreature.AttackPoints);
+        Assert.Equal(baseHpStart, baseCreature.HealthPoints.Value);
+        Assert.Equal(baseAttackStart, baseCreature.AttackPoints.Value);
         Assert.NotEqual(baseCreature.HealthPoints, clone.HealthPoints);
         Assert.False(ReferenceEquals(baseCreature, clone));
     }

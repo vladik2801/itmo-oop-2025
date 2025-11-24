@@ -1,4 +1,5 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab3.Creatures;
+using Itmo.ObjectOrientedProgramming.Lab3.ValueObject;
 
 namespace Itmo.ObjectOrientedProgramming.Lab3.Spells;
 
@@ -8,7 +9,8 @@ public sealed class StaminaSpell : ISpell
 
     public ICreature Cast(ICreature target)
     {
-        target.ChangeHealthPoints(target.HealthPoints + _healthBonus);
+        HealthPoint newHealth = new(target.HealthPoints.Value + _healthBonus);
+        target.ChangeHealthPoints(newHealth);
         return target;
     }
 }

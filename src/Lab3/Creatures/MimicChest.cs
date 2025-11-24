@@ -6,38 +6,38 @@ public class MimicChest : ICreature
 {
     public MimicChest(HealthPoint healthPoint, AttackPoint attackPoint)
     {
-        HealthPoints = healthPoint.Value;
-        AttackPoints = attackPoint.Value;
+        HealthPoints = healthPoint;
+        AttackPoints = attackPoint;
     }
 
-    public int HealthPoints { get; private set; }
+    public HealthPoint HealthPoints { get; private set; }
 
-    public int AttackPoints { get; private set; }
+    public AttackPoint AttackPoints { get; private set; }
 
     public void Attack(ICreature creature)
     {
-        HealthPoints = int.Max(HealthPoints, creature.HealthPoints);
-        AttackPoints = int.Max(AttackPoints, creature.AttackPoints);
+        HealthPoints = new(int.Max(HealthPoints.Value, creature.HealthPoints.Value));
+        AttackPoints = new(int.Max(AttackPoints.Value, creature.AttackPoints.Value));
         creature.TakeDamage(AttackPoints);
     }
 
-    public void ChangeHealthPoints(int healthPoints)
+    public void ChangeHealthPoints(HealthPoint healthPoints)
     {
         HealthPoints = healthPoints;
     }
 
-    public void ChangeAttackPoints(int attackPoints)
+    public void ChangeAttackPoints(AttackPoint attackPoints)
     {
         AttackPoints = attackPoints;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(AttackPoint damage)
     {
-        HealthPoints -= damage;
+        HealthPoints = new(HealthPoints.Value - damage.Value);
     }
 
     public ICreature Clone()
     {
-        return new MimicChest(new(HealthPoints), new(AttackPoints));
+        return new MimicChest(new(HealthPoints.Value), new(AttackPoints.Value));
     }
 }

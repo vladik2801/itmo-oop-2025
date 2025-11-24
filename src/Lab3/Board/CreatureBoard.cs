@@ -18,7 +18,7 @@ public class CreatureBoard : IPrototype<CreatureBoard>
     {
         foreach (ICreature creature in _creatures)
         {
-            if (creature.HealthPoints > 0 && creature.AttackPoints > 0)
+            if (creature.HealthPoints.Value > 0 && creature.AttackPoints.Value > 0)
             {
                 return creature;
             }
@@ -31,7 +31,7 @@ public class CreatureBoard : IPrototype<CreatureBoard>
     {
         foreach (ICreature creature in _creatures)
         {
-            if (creature.HealthPoints > 0)
+            if (creature.HealthPoints.Value > 0)
             {
                 return creature;
             }

@@ -6,37 +6,41 @@ public class EvilFighter : ICreature
 {
     public EvilFighter(HealthPoint healthPoints, AttackPoint attackPoints)
     {
-        HealthPoints = healthPoints.Value;
-        AttackPoints = attackPoints.Value;
+        HealthPoints = healthPoints;
+        AttackPoints = attackPoints;
     }
 
-    public int HealthPoints { get; private set; }
+    public HealthPoint HealthPoints { get; private set; }
 
-    public int AttackPoints { get; private set; }
+    public AttackPoint AttackPoints { get; private set; }
 
     public void Attack(ICreature creature)
     {
         creature.TakeDamage(AttackPoints);
     }
 
-    public void ChangeHealthPoints(int healthPoints)
+    public void ChangeHealthPoints(HealthPoint healthPoints)
     {
         HealthPoints = healthPoints;
     }
 
-    public void ChangeAttackPoints(int attackPoints)
+    public void ChangeAttackPoints(AttackPoint attackPoints)
     {
         AttackPoints = attackPoints;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(AttackPoint damage)
     {
-        HealthPoints -= damage;
-        if (HealthPoints > 0) AttackPoints *= 2;
+        HealthPoint newHealthPoint = new(HealthPoints.Value - damage.Value);
+        if (HealthPoints.Value > 0)
+        {
+            AttackPoint newAttackPoint = new(AttackPoints.Value * 2);
+            AttackPoints = newAttackPoint;
+        }
     }
 
     public ICreature Clone()
     {
-        return new EvilFighter(new(HealthPoints), new(AttackPoints));
+        return new EvilFighter(new(HealthPoints.Value), new(AttackPoints.Value));
     }
 }

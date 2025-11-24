@@ -1,4 +1,5 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab3.Creatures;
+using Itmo.ObjectOrientedProgramming.Lab3.ValueObject;
 
 namespace Itmo.ObjectOrientedProgramming.Lab3.Modifiers;
 
@@ -11,27 +12,27 @@ public sealed class AttackSkill : ICreature
         _creature = creature;
     }
 
-    public int HealthPoints => _creature.HealthPoints;
+    public HealthPoint HealthPoints => _creature.HealthPoints;
 
-    public int AttackPoints => _creature.AttackPoints;
+    public AttackPoint AttackPoints => _creature.AttackPoints;
 
     public void Attack(ICreature creature)
     {
         _creature.Attack(creature);
-        if (creature.HealthPoints > 0) _creature.Attack(creature);
+        if (creature.HealthPoints.Value > 0) _creature.Attack(creature);
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(AttackPoint damage)
     {
         _creature.TakeDamage(damage);
     }
 
-    public void ChangeAttackPoints(int attackPoints)
+    public void ChangeAttackPoints(AttackPoint attackPoints)
     {
         _creature.ChangeAttackPoints(attackPoints);
     }
 
-    public void ChangeHealthPoints(int healthPoints)
+    public void ChangeHealthPoints(HealthPoint healthPoints)
     {
         _creature.ChangeHealthPoints(healthPoints);
     }

@@ -1,4 +1,5 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab3.Creatures;
+using Itmo.ObjectOrientedProgramming.Lab3.ValueObject;
 
 namespace Itmo.ObjectOrientedProgramming.Lab3.Spells;
 
@@ -8,7 +9,8 @@ public sealed class PowerSpell : ISpell
 
     public ICreature Cast(ICreature target)
     {
-        target.ChangeAttackPoints(target.AttackPoints + _attackBonus);
+        AttackPoint attackPoint = new(target.AttackPoints.Value + _attackBonus);
+        target.ChangeAttackPoints(attackPoint);
         return target;
     }
 }

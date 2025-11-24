@@ -1,16 +1,18 @@
-﻿namespace Itmo.ObjectOrientedProgramming.Lab3.Creatures;
+﻿using Itmo.ObjectOrientedProgramming.Lab3.ValueObject;
+
+namespace Itmo.ObjectOrientedProgramming.Lab3.Creatures;
 
 public interface ICreature : IPrototype<ICreature>
 {
-    int HealthPoints { get; }
+    HealthPoint HealthPoints { get; }
 
-    int AttackPoints { get; }
+    AttackPoint AttackPoints { get; }
 
-    void TakeDamage(int damage);
+    void TakeDamage(AttackPoint damage);
 
     void Attack(ICreature creature);
 
-    void ChangeHealthPoints(int healthPoints);
+    void ChangeHealthPoints(HealthPoint healthPoints);
 
-    void ChangeAttackPoints(int attackPoints);
+    void ChangeAttackPoints(AttackPoint attackPoints);
 }
