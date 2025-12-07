@@ -9,7 +9,7 @@ public class TreeListCommand : ICommand
     private readonly int _maxDepth;
     private readonly IOutputWriter _outputWriter;
 
-    public TreeListCommand(Session session, int maxDepth,  IOutputWriter outputWriter)
+    public TreeListCommand(Session session, int maxDepth, IOutputWriter outputWriter)
     {
         _session = session;
         _maxDepth = maxDepth;
