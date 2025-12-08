@@ -6,7 +6,7 @@ public interface IFileSystem
 
     IEnumerable<IFileSystemEntity> EnumerateChildren(DirectoryEntity directory);
 
-    DirectoryEntity? GetDirectoryByPath(string path);
+    string ListTree(string currentPath, int maxDepth);
 
     string ReadFile(string path);
 

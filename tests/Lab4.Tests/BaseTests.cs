@@ -12,63 +12,64 @@ public class BaseTests
     public void ConnectCommand_WithAbsolutePath_ConnectsSession()
     {
         // Arrange
-        Session session = new();
+        FileSystemContext context = new(new UnixPathService());
         FileSystemMock fs = new();
-        ConnectCommand command = new(session, fs, "/");
+        ConnectCommand command = new(fs, "/");
 
         // Act
-        OperationResult result = command.Execute();
+        OperationResult result = command.Execute(context);
 
         // Assert
         Assert.IsType<OperationResult.Succes>(result);
-        Assert.NotNull(session.FileSystem);
-        Assert.Equal("/", session.LocalPath);
+        Assert.NotNull(context.FileSystem);
+        Assert.Equal("/", context.CurrentPath);
     }
 
     [Fact]
     public void DisconnectCommand_WhenNotConnected_ReturnsFailure()
     {
         // Arrange
-        Session session = new();
-        DisconnectCommand command = new(session);
+        FileSystemContext context = new(new UnixPathService());
+        DisconnectCommand command = new();
 
         // Act
-        OperationResult result = command.Execute();
+        OperationResult result = command.Execute(context);
 
         // Assert
         OperationResult.Failure failure = Assert.IsType<OperationResult.Failure>(result);
         Assert.False(string.IsNullOrWhiteSpace(failure.Message));
-        Assert.Null(session.FileSystem);
+        Assert.Null(context.FileSystem);
     }
 
     [Fact]
     public void DisconnectCommand_WhenConnected_ClearsFileSystem()
     {
         // Arrange
-        Session session = new();
+        FileSystemContext context = new(new UnixPathService());
         FileSystemMock fs = new();
-        session.Connect(fs);
-        DisconnectCommand command = new(session);
+        context.FileSystem = fs;
+        context.CurrentPath = "/somewhere";
+        DisconnectCommand command = new();
 
         // Act
-        OperationResult result = command.Execute();
+        OperationResult result = command.Execute(context);
 
         // Assert
         Assert.IsType<OperationResult.Succes>(result);
-        Assert.Null(session.FileSystem);
-        Assert.Equal("/", session.LocalPath);
+        Assert.Null(context.FileSystem);
+        Assert.Equal("/", context.CurrentPath);
     }
 
     [Fact]
     public void TreeListCommand_WhenNotConnected_ReturnsNotConnected()
     {
         // Arrange
-        Session session = new();
+        FileSystemContext context = new(new UnixPathService());
         OutputWriterMock writer = new();
-        TreeListCommand command = new(session, 2, writer);
+        TreeListCommand command = new(2, writer);
 
         // Act
-        OperationResult result = command.Execute();
+        OperationResult result = command.Execute(context);
 
         // Assert
         OperationResult.Failure failure = Assert.IsType<OperationResult.Failure>(result);
@@ -80,17 +81,17 @@ public class BaseTests
     public void TreeListCommand_WithValidRootDirectory_WritesTree()
     {
         // Arrange
-        Session session = new();
+        FileSystemContext context = new(new UnixPathService());
         FileSystemMock fs = new();
         DirectoryEntity root = new("/");
         fs.Directory = root;
-        session.Connect(fs);
-        session.LocalPath = "/";
+        context.FileSystem = fs;
+        context.CurrentPath = "/";
         OutputWriterMock writer = new();
-        TreeListCommand command = new(session, 1, writer);
+        TreeListCommand command = new(1, writer);
 
         // Act
-        OperationResult result = command.Execute();
+        OperationResult result = command.Execute(context);
 
         // Assert
         Assert.IsType<OperationResult.Succes>(result);
@@ -101,16 +102,16 @@ public class BaseTests
     public void TreeListCommand_WhenDirectoryNotFound_ReturnsFailure()
     {
         // Arrange
-        Session session = new();
+        FileSystemContext context = new(new UnixPathService());
         FileSystemMock fs = new();
         fs.Directory = null;
-        session.Connect(fs);
-        session.LocalPath = "/unknown";
+        context.FileSystem = fs;
+        context.CurrentPath = "/unknown";
         OutputWriterMock writer = new();
-        TreeListCommand command = new(session, 1, writer);
+        TreeListCommand command = new(1, writer);
 
         // Act
-        OperationResult result = command.Execute();
+        OperationResult result = command.Execute(context);
 
         // Assert
         OperationResult.Failure failure = Assert.IsType<OperationResult.Failure>(result);
@@ -121,13 +122,14 @@ public class BaseTests
     public void FileMoveCommand_WhenConnected_CallsFileSystemMoveFile()
     {
         // Arrange
-        Session session = new();
+        FileSystemContext context = new(new UnixPathService());
         FileSystemMock fs = new();
-        session.Connect(fs);
-        FileMoveCommand command = new(session, "/src.txt", "/destDir");
+        context.FileSystem = fs;
+        context.CurrentPath = "/";
+        FileMoveCommand command = new("/src.txt", "/destDir");
 
         // Act
-        OperationResult result = command.Execute();
+        OperationResult result = command.Execute(context);
 
         // Assert
         Assert.IsType<OperationResult.Succes>(result);
@@ -140,13 +142,14 @@ public class BaseTests
     public void FileDeleteCommand_WhenConnected_CallsFileSystemDeleteFile()
     {
         // Arrange
-        Session session = new();
+        FileSystemContext context = new(new UnixPathService());
         FileSystemMock fs = new();
-        session.Connect(fs);
-        FileDeleteCommand command = new(session, "/toDelete.txt");
+        context.FileSystem = fs;
+        context.CurrentPath = "/";
+        FileDeleteCommand command = new("/toDelete.txt");
 
         // Act
-        OperationResult result = command.Execute();
+        OperationResult result = command.Execute(context);
 
         // Assert
         Assert.IsType<OperationResult.Succes>(result);
@@ -158,13 +161,14 @@ public class BaseTests
     public void FileRenameCommand_WhenConnected_CallsFileSystemRenameFile()
     {
         // Arrange
-        Session session = new();
+        FileSystemContext context = new(new UnixPathService());
         FileSystemMock fs = new();
-        session.Connect(fs);
-        FileRenameCommand command = new(session, "/old.txt", "new.txt");
+        context.FileSystem = fs;
+        context.CurrentPath = "/";
+        FileRenameCommand command = new("/old.txt", "new.txt");
 
         // Act
-        OperationResult result = command.Execute();
+        OperationResult result = command.Execute(context);
 
         // Assert
         Assert.IsType<OperationResult.Succes>(result);
@@ -177,13 +181,14 @@ public class BaseTests
     public void FileCopyCommand_WhenConnected_CallsFileSystemCopyFile()
     {
         // Arrange
-        Session session = new();
+        FileSystemContext context = new(new UnixPathService());
         FileSystemMock fs = new();
-        session.Connect(fs);
-        FileCopyCommand command = new(session, "/a.txt", "/dir");
+        context.FileSystem = fs;
+        context.CurrentPath = "/";
+        FileCopyCommand command = new("/a.txt", "/dir");
 
         // Act
-        OperationResult result = command.Execute();
+        OperationResult result = command.Execute(context);
 
         // Assert
         Assert.IsType<OperationResult.Succes>(result);

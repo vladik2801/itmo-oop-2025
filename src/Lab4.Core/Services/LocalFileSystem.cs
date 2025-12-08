@@ -1,4 +1,5 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystem;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.Visitors;
 
 namespace Itmo.ObjectOrientedProgramming.Lab4.Core.Services;
 
@@ -33,6 +34,17 @@ public class LocalFileSystem : IFileSystem
         }
 
         return current;
+    }
+
+    public string ListTree(string currentPath, int maxDepth)
+    {
+        DirectoryEntity? directory = GetDirectoryByPath(currentPath);
+        if (directory is null)
+            throw new InvalidOperationException("Directory not found");
+
+        var visitor = new TreeFormattingVisitor(this, maxDepth);
+        directory.Accept(visitor);
+        return visitor.Value;
     }
 
     public string ReadFile(string path)

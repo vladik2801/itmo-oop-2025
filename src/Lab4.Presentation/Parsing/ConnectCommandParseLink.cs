@@ -1,35 +1,50 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystem;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.Strategy;
 
 namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing;
 
 public sealed class ConnectCommandParseLink : CommandParseLinkBase
 {
-    public override ParsedCommand? Parse(string line)
+    private readonly IReadOnlyCollection<IConnectionModeStrategy> _strategies;
+
+    public ConnectCommandParseLink(IReadOnlyCollection<IConnectionModeStrategy> strategies)
     {
-        string[] parts = line.Split(' ');
-        if (parts.Length == 0) return null;
-        if (parts[0] != "connect") return CallNext(line);
+        _strategies = strategies;
+    }
 
-        if (parts.Length < 2) throw new ArgumentException("Connect requires two arguments");
-        string name = "connect";
-        string? subName = null;
-        string address = parts[1];
-        string[] arguments = new[] { address };
-
-        var flags = new Dictionary<string, string?>();
-        for (int i = 2; i < parts.Length; i++)
+    protected override ICommand? TryParse(CommandTokenIterator tokens)
+    {
+        if (!tokens.MoveNext()) return null;
+        if (!string.Equals(tokens.Current, "connect", StringComparison.OrdinalIgnoreCase)) return null;
+        if (!tokens.MoveNext()) return null;
+        string path = tokens.Current;
+        string mode = "local";
+        while (tokens.MoveNext())
         {
-            if (parts[i].StartsWith('-') == false) continue;
-            string key = parts[i].TrimStart('-');
-            string? value = null;
-            if (i + 1 < parts.Length && !parts[i + 1].StartsWith('-'))
+            if (tokens.Current == "m")
             {
-                value = parts[i + 1];
+                if (!tokens.MoveNext()) return null;
+                mode = tokens.Current;
             }
-
-            flags[key] = value;
+            else
+            {
+                return null;
+            }
         }
 
-        return new ParsedCommand(name, subName, arguments, flags);
+        IConnectionModeStrategy? strategy = null;
+        foreach (IConnectionModeStrategy strat in _strategies)
+        {
+            if (strat.Mode == mode)
+            {
+                strategy = strat;
+                break;
+            }
+        }
+
+        if (strategy is null) return null;
+        IFileSystem fileSystem = strategy.CreateFileSystem(path);
+        return new ConnectCommand(fileSystem, path);
     }
 }

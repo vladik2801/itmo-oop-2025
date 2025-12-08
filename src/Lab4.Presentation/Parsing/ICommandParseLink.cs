@@ -6,5 +6,5 @@ public interface ICommandParseLink
 {
     ICommandParseLink AddNext(ICommandParseLink link);
 
-    ParsedCommand? Parse(string line);
+    ICommand? Parse(string line);
 }

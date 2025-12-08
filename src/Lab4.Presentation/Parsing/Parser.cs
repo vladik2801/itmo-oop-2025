@@ -4,20 +4,15 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing;
 
 public class Parser : IParser
 {
-    private readonly ConnectCommandParseLink _first;
+    private readonly ICommandParseLink _root;
 
-    public Parser()
+    public Parser(ICommandParseLink root)
     {
-        ConnectCommandParseLink connect = new();
-        TreeCommandParseLink tree = new();
-        FileCommandParseLink file = new();
-        connect.AddNext(tree).AddNext(file);
-        _first = connect;
+        _root = root;
     }
 
-    public ParsedCommand? Parse(string? line)
+    public ICommand? Parse(string line)
     {
-        if (string.IsNullOrWhiteSpace(line)) return null;
-        return _first.Parse(line);
+        return _root.Parse(line);
     }
 }

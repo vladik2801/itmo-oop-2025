@@ -81,4 +81,10 @@ public class FileSystemMock : IFileSystem
         RenameName = newName;
         return new OperationResult.Succes();
     }
+
+    public string ListTree(string currentPath, int maxDepth)
+    {
+        if (Directory == null) throw new InvalidOperationException("Directory not found");
+        return Directory.Path;
+    }
 }

@@ -20,10 +20,13 @@ public abstract class CommandParseLinkBase : ICommandParseLink
         return this;
     }
 
-    public abstract ParsedCommand? Parse(string line);
-
-    protected ParsedCommand? CallNext(string line)
+    public ICommand? Parse(string line)
     {
-        return _next is not null ? _next.Parse(line) : null;
+        using var tokens = new CommandTokenIterator(line);
+        ICommand? result = TryParse(tokens);
+        if (result is null) return result;
+        return _next?.Parse(line);
     }
+
+    protected abstract ICommand? TryParse(CommandTokenIterator tokens);
 }

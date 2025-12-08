@@ -6,20 +6,18 @@ public class ConnectCommand : ICommand
 {
     private readonly string _path;
     private readonly IFileSystem _fileSystem;
-    private readonly Session _session;
-    private readonly UnixPathService _pathService = new();
 
-    public ConnectCommand(Session session, IFileSystem fileSystem, string path)
+    public ConnectCommand(IFileSystem fileSystem, string path)
     {
         _path = path;
-        _session = session;
         _fileSystem = fileSystem;
     }
 
-    public OperationResult Execute()
+    public OperationResult Execute(FileSystemContext context)
     {
-        if (!_pathService.IsAbsolutePath(_path)) return new OperationResult.Failure("Path not absolute");
-        _session.Connect(_fileSystem);
+        if (!context.PathService.IsAbsolutePath(_path)) return new OperationResult.Failure("Path not absolute");
+        context.FileSystem = _fileSystem;
+        context.CurrentPath = _path;
         return new OperationResult.Succes();
     }
 }

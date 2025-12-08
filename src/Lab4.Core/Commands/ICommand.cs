@@ -1,6 +1,8 @@
-﻿namespace Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
+﻿using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystem;
+
+namespace Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
 
 public interface ICommand
 {
-    OperationResult Execute();
+    OperationResult Execute(FileSystemContext context);
 }

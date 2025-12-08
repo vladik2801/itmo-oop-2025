@@ -1,6 +1,6 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab4.Core;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
-using Itmo.ObjectOrientedProgramming.Lab4.Core.CommandsFactory;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystem;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.Services;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.Strategy;
 using Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing;
@@ -11,90 +11,49 @@ public static class Program
 {
     public static void Main()
     {
-        Session session = new();
-        Parser parser = new();
-        ConsoleOutputWriter output = new();
+        var output = new ConsoleOutputWriter();
+        var context = new FileSystemContext(new UnixPathService());
+        var connectionStrategies = new List<IConnectionModeStrategy>
+        {
+            new LocalConnectionModeStrategy(new LocalFileSystemFactory()),
+        };
 
-        LocalFileSystemFactory lfsFactory = new();
-        List<IConnectionModeStrategy> connectionStrategies = new();
-        connectionStrategies.Add(new LocalConnectionModeStrategy(lfsFactory));
+        var fileOutputMode = new List<IFileOutputMode>
+        {
+            new ConsoleFileOutputMode(output),
+        };
 
-        List<IFileOutputMode> fileOutputModes = new();
-        fileOutputModes.Add(new ConsoleFileOutputMode(output));
-
-        List<ICommandFactory> factories = new();
-        factories.Add(new ConnectCommandFactory(connectionStrategies));
-        factories.Add(new DisconnectComandFactory());
-        factories.Add(new TreeListCommandFactory(output));
-        factories.Add(new TreeeGotoCommandFactory());
-        factories.Add(new FileShowCommandFactory(fileOutputModes));
-        factories.Add(new FileMoveCommandFactory());
-        factories.Add(new FileRenameCommandFactory());
-        factories.Add(new FileCopyCommandFactory());
-        factories.Add(new FileDeleteCommandFactory());
-
+        IParser parser = CommandParserFactory.CreateParser(connectionStrategies, fileOutputMode, output);
         while (true)
         {
             string? line = Console.ReadLine();
-            Console.WriteLine("You wrote: " + line);
             if (line == null) break;
             if (string.IsNullOrWhiteSpace(line)) continue;
 
-            ParsedCommand? parsed = parser.Parse(line);
-            if (parsed == null) continue;
-
-            ICommandFactory? factory = null;
-            foreach (ICommandFactory candidate in factories)
-            {
-                if (candidate.CanHandle(parsed))
-                {
-                    factory = candidate;
-                    break;
-                }
-            }
-
-            if (factory == null)
+            ICommand? command = parser.Parse(line);
+            if (command is null)
             {
                 output.Write("Unknown command");
-                continue;
-            }
-
-            ICommand command;
-            try
-            {
-                command = factory.Create(parsed, session);
-            }
-            catch (Exception ex)
-            {
-                output.Write("Error creating command" + ex.Message);
                 continue;
             }
 
             OperationResult result;
             try
             {
-                result = command.Execute();
+                result = command.Execute(context);
             }
             catch (Exception ex)
             {
-                output.Write("Error executing command" + ex.Message);
+                output.Write($"Error: {ex.Message}");
                 continue;
             }
 
             switch (result)
             {
-                case OperationResult.Succes:
-                    break;
+                case OperationResult.Succes: break;
                 case OperationResult.Failure failure:
-                    if (!string.IsNullOrEmpty(failure.Message))
-                    {
-                        output.Write("Error: " + failure.Message);
-                    }
-                    else
-                    {
-                        output.Write("Command failed");
-                    }
-
+                    if (!string.IsNullOrWhiteSpace(failure.Message)) output.Write("Error " + failure.Message);
+                    else output.Write("Command failed");
                     break;
             }
         }

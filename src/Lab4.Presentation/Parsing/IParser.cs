@@ -4,5 +4,5 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing;
 
 public interface IParser
 {
-    ParsedCommand? Parse(string? line);
+    ICommand? Parse(string line);
 }

@@ -1,25 +1,24 @@
-﻿namespace Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
+﻿using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystem;
+
+namespace Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
 
 public class FileMoveCommand : ICommand
 {
-    private readonly Session _session;
-    private readonly UnixPathService _pathService = new();
     private readonly string _path;
     private readonly string _destinationPath;
 
-    public FileMoveCommand(Session session, string path, string destinationPath)
+    public FileMoveCommand(string path, string destinationPath)
     {
-        _session = session;
         _path = path;
         _destinationPath = destinationPath;
     }
 
-    public OperationResult Execute()
+    public OperationResult Execute(FileSystemContext context)
     {
-        if (_session.FileSystem is null) return new OperationResult.Failure("File not found");
-        if (_session.LocalPath is null) return new OperationResult.Failure("Local path not found");
-        string absolutePath = _pathService.Convert(_session.LocalPath, _path);
-        string destinationPath = _pathService.Convert(_session.LocalPath, _destinationPath);
-        return _session.FileSystem.MoveFile(absolutePath, destinationPath);
+        if (context.FileSystem is null) return new OperationResult.Failure("File not found");
+        if (context.CurrentPath is null) return new OperationResult.Failure("Local path not found");
+        string absolutePath = context.PathService.Convert(context.CurrentPath, _path);
+        string destinationPath = context.PathService.Convert(context.CurrentPath, _destinationPath);
+        return context.FileSystem.MoveFile(absolutePath, destinationPath);
     }
 }

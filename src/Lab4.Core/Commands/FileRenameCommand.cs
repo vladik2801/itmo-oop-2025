@@ -1,25 +1,24 @@
-﻿namespace Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
+﻿using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystem;
+
+namespace Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
 
 public class FileRenameCommand : ICommand
 {
-    private readonly Session _session;
-    private readonly UnixPathService _pathService = new();
     private readonly string _path;
     private readonly string _newName;
 
-    public FileRenameCommand(Session session, string path, string newName)
+    public FileRenameCommand(string path, string newName)
     {
-        _session = session;
         _path = path;
         _newName = newName;
     }
 
-    public OperationResult Execute()
+    public OperationResult Execute(FileSystemContext context)
     {
-        if (_session.FileSystem is null) return new OperationResult.Failure("File not found");
-        if (_session.LocalPath is null) return new OperationResult.Failure("Local path not found");
+        if (context.FileSystem is null) return new OperationResult.Failure("File not found");
+        if (context.CurrentPath is null) return new OperationResult.Failure("Local path not found");
 
-        string absolutePath = _pathService.Convert(_session.LocalPath, _path);
-        return _session.FileSystem.RenameFile(absolutePath, _newName);
+        string absolutePath = context.PathService.Convert(context.CurrentPath, _path);
+        return context.FileSystem.RenameFile(absolutePath, _newName);
     }
 }

@@ -1,18 +1,15 @@
-﻿namespace Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
+﻿using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystem;
+
+namespace Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
 
 public class DisconnectCommand : ICommand
 {
-    private readonly Session _session;
-
-    public DisconnectCommand(Session session)
+    public OperationResult Execute(FileSystemContext context)
     {
-        _session = session;
-    }
+        if (context.FileSystem is null) return new OperationResult.Failure("File not found");
+        context.FileSystem = null;
+        context.CurrentPath = "/";
 
-    public OperationResult Execute()
-    {
-        if (_session.FileSystem is null) return new OperationResult.Failure("File not found");
-        _session.Disconnect();
         return new OperationResult.Succes();
     }
 }
