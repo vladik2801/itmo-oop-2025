@@ -1,11 +1,10 @@
 ﻿using Itmo.ObjectOrientedProgramming.Lab5.Accounts;
 using Itmo.ObjectOrientedProgramming.Lab5.Sessions;
+using Itmo.ObjectOrientedProgramming.Lab5.Tests.Mocks;
 using Itmo.ObjectOrientedProgramming.Lab5.ValueObjects;
 using Lab5.Application.Contracts.Accounts.Models;
 using Lab5.Application.Contracts.Accounts.Operations;
 using Lab5.Application.Services;
-using Lab5.Infrastructure.Persistence;
-using Lab5.Infrastructure.Persistence.Repositories;
 using Xunit;
 
 namespace Itmo.ObjectOrientedProgramming.Lab5.Tests;
@@ -13,81 +12,119 @@ namespace Itmo.ObjectOrientedProgramming.Lab5.Tests;
 public sealed class AccountServiceTests
 {
     [Fact]
-    public void When_WithdrawWithEnoughMoney_Should_ReturnSuccess_AndDecreaseBalance()
+    public void When_Deposit_AndSessionNotFound_Should_ReturnFailure()
     {
         // Arrange
-        PersistenceContext context = CreateContext();
-        context.Accounts.Add(new Account(new AccountId(1), new PinCode(1234)));
-        Guid sessionId = CreateUserSession(context, accountId: 1, pinCode: 1234);
+        var accounts = new MockAccountRepository();
+        var userSessions = new MockUserSessionRepository();
+        var adminSessions = new MockAdminSessionRepository();
+        var history = new MockOperationHistoryRepository();
+        var context = new MockPersistenceContext(accounts, userSessions, adminSessions, history);
         var service = new AccountService(context);
-        var deposit = new DepositOperation.Request(sessionId, 200);
-        service.Deposit(deposit);
-        var withdraw = new WithdrawOperation.Request(sessionId, 50);
+        var request = new DepositOperation.Request(SessionId: Guid.NewGuid(), Amount: 100);
 
         // Act
-        WithdrawOperation.Response response = service.Withdraw(withdraw);
+        DepositOperation.Response response = service.Deposit(request);
 
         // Assert
-        Assert.IsType<WithdrawOperation.Response.Success>(response);
-        AccountBalanceModel balance = service.GetBalance(sessionId);
-        Assert.Equal(150, balance.Balance);
+        Assert.IsType<DepositOperation.Response.Failure>(response);
     }
 
     [Fact]
-    public void When_DepositWithPositiveAmount_Should_ReturnSuccess_AndIncreaseBalance()
+    public void When_Deposit_WithNonPositiveAmount_Should_ReturnFailure()
     {
         // Arrange
-        PersistenceContext context = CreateContext();
-        context.Accounts.Add(new Account(new AccountId(1), new PinCode(1234)));
-        Guid sessionId = CreateUserSession(context, accountId: 1, pinCode: 1234);
+        var accounts = new MockAccountRepository();
+        accounts.Seed(new Account(new AccountId(1), new PinCode(1234)));
+        var userSessions = new MockUserSessionRepository();
+        var sessionId = new SessionId(Guid.NewGuid());
+        userSessions.Seed(new UserSession(sessionId, new AccountId(1)));
+        var adminSessions = new MockAdminSessionRepository();
+        var history = new MockOperationHistoryRepository();
+        var context = new MockPersistenceContext(accounts, userSessions, adminSessions, history);
         var service = new AccountService(context);
-        var request = new DepositOperation.Request(
-            SessionId: sessionId,
-            Amount: 100);
+        var request = new DepositOperation.Request(SessionId: sessionId.Value, Amount: 0);
+
+        // Act
+        DepositOperation.Response response = service.Deposit(request);
+
+        // Assert
+        Assert.IsType<DepositOperation.Response.Failure>(response);
+    }
+
+    [Fact]
+    public void When_Deposit_Success_Should_IncreaseBalance_AndWriteHistory()
+    {
+        // Arrange
+        var accounts = new MockAccountRepository();
+        accounts.Seed(new Account(new AccountId(1), new PinCode(1234)));
+        var userSessions = new MockUserSessionRepository();
+        var sessionId = new SessionId(Guid.NewGuid());
+        userSessions.Seed(new UserSession(sessionId, new AccountId(1)));
+        var adminSessions = new MockAdminSessionRepository();
+        var history = new MockOperationHistoryRepository();
+        var context = new MockPersistenceContext(accounts, userSessions, adminSessions, history);
+        var service = new AccountService(context);
+        var request = new DepositOperation.Request(SessionId: sessionId.Value, Amount: 100);
 
         // Act
         DepositOperation.Response response = service.Deposit(request);
 
         // Assert
         Assert.IsType<DepositOperation.Response.Success>(response);
-        AccountBalanceModel balance = service.GetBalance(sessionId);
-        Assert.Equal(100, balance.Balance);
+        AccountBalanceModel balance = service.GetBalance(sessionId.Value);
+        Assert.Equal(100m, balance.Balance);
+        Assert.Equal(1, history.AddCalls);
     }
 
     [Fact]
-    public void When_DepositThenWithdraw_Should_KeepConsistentBalance()
+    public void When_Withdraw_AndInsufficientFunds_Should_ReturnFailure_AndNotWriteHistory()
     {
         // Arrange
-        PersistenceContext context = CreateContext();
-        context.Accounts.Add(new Account(new AccountId(1), new PinCode(1234)));
-        Guid sessionId = CreateUserSession(context, accountId: 1, pinCode: 1234);
+        var accounts = new MockAccountRepository();
+        accounts.Seed(new Account(new AccountId(1), new PinCode(1234)));
+        var userSessions = new MockUserSessionRepository();
+        var sessionId = new SessionId(Guid.NewGuid());
+        userSessions.Seed(new UserSession(sessionId, new AccountId(1)));
+        var adminSessions = new MockAdminSessionRepository();
+        var history = new MockOperationHistoryRepository();
+        var context = new MockPersistenceContext(accounts, userSessions, adminSessions, history);
         var service = new AccountService(context);
+        var request = new WithdrawOperation.Request(SessionId: sessionId.Value, Amount: 50);
 
         // Act
-        service.Deposit(new DepositOperation.Request(sessionId, 300));
-        service.Withdraw(new WithdrawOperation.Request(sessionId, 120));
-        service.Deposit(new DepositOperation.Request(sessionId, 50));
-        service.Withdraw(new WithdrawOperation.Request(sessionId, 10));
+        WithdrawOperation.Response response = service.Withdraw(request);
 
         // Assert
-        AccountBalanceModel balance = service.GetBalance(sessionId);
-        Assert.Equal(220, balance.Balance);
+        Assert.IsType<WithdrawOperation.Response.Failure>(response);
+        Assert.Equal(0, history.AddCalls);
     }
 
-    private static PersistenceContext CreateContext()
+    [Fact]
+    public void When_Withdraw_Success_Should_DecreaseBalance_AndWriteHistory()
     {
-        return new PersistenceContext(
-            new AccountRepository(),
-            new UserSessionRepository(),
-            new AdminSessionRepository(),
-            new OperationHistoryRepository());
-    }
-
-    private static Guid CreateUserSession(PersistenceContext context, long accountId, int pinCode)
-    {
+        // Arrange
+        var accounts = new MockAccountRepository();
+        accounts.Seed(new Account(new AccountId(1), new PinCode(1234)));
+        var userSessions = new MockUserSessionRepository();
         var sessionId = new SessionId(Guid.NewGuid());
-        var session = new UserSession(sessionId, new AccountId(accountId));
-        context.UserSessions.Add(session);
-        return sessionId.Value;
+        userSessions.Seed(new UserSession(sessionId, new AccountId(1)));
+        var adminSessions = new MockAdminSessionRepository();
+        var history = new MockOperationHistoryRepository();
+        var context = new MockPersistenceContext(accounts, userSessions, adminSessions, history);
+        var service = new AccountService(context);
+        service.Deposit(new DepositOperation.Request(sessionId.Value, 200));
+        var request = new WithdrawOperation.Request(SessionId: sessionId.Value, Amount: 50);
+
+        // Act
+        WithdrawOperation.Response response = service.Withdraw(request);
+
+        // Assert
+        Assert.IsType<WithdrawOperation.Response.Success>(response);
+
+        AccountBalanceModel balance = service.GetBalance(sessionId.Value);
+        Assert.Equal(150, balance.Balance);
+
+        Assert.Equal(2, history.AddCalls);
     }
 }

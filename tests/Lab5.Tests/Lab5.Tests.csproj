@@ -16,10 +16,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Lab5.Application.Contracts\Lab5.Application.Contracts.csproj" />
-      <ProjectReference Include="..\..\src\Lab5.Application\Lab5.Application.csproj" />
-      <ProjectReference Include="..\..\src\Lab5.Domain\Lab5.Domain.csproj" />
-      <ProjectReference Include="..\..\src\Lab5.Infrastructure\Lab5.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\src\Lab5\Application\Lab5.Application.Contracts\Lab5.Application.Contracts.csproj" />
+      <ProjectReference Include="..\..\src\Lab5\Application\Lab5.Application\Lab5.Application.csproj" />
+      <ProjectReference Include="..\..\src\Lab5\Domain\Lab5.Domain\Lab5.Domain.csproj" />
+      <ProjectReference Include="..\..\src\Lab5\Infrastructure\Lab5.Infrastructure\Lab5.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
