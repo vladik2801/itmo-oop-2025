@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IUserSessionRepository, UserSessionRepository>();
         services.AddSingleton<IAdminSessionRepository, AdminSessionRepository>();
         services.AddSingleton<IOperationHistoryRepository, OperationHistoryRepository>();
-        services.AddSingleton<IPersistenceContext,  PersistenceContext>();
+        services.AddSingleton<IPersistenceContext, PersistenceContext>();
 
         return services;
     }
